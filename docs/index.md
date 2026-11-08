@@ -28,7 +28,7 @@ escaneados).
 - **Buscar:** use a caixa de busca no topo para procurar qualquer palavra em todas as leis.
 - **Citar um artigo:** os artigos têm link próprio. Por exemplo, `.../lc-003-2001/#art-5`
   abre direto no art. 5º.
-- **Ver o que mudou:** cada lei é um arquivo no GitHub. O ícone de histórico no topo da página
-  mostra todas as alterações feitas no texto.
+- **Ver o que mudou:** cada lei é um arquivo no GitHub. O ícone de relógio, no canto direito
+  ao lado do título, abre a lista de todas as alterações feitas no texto daquela lei.
 - **Corrigir um erro:** o ícone de lápis abre o texto para edição no GitHub. Quem quiser pode
   propor a correção comparando com o PDF publicado pela prefeitura.

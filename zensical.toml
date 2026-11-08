@@ -6,6 +6,7 @@ repo_url = "https://github.com/PrefeituraBataypora/leis-bataypora"
 edit_uri = "edit/main/docs/"
 copyright = "Prefeitura Municipal de Batayporã. Textos ainda em revisão."
 extra_css = ["stylesheets/extra.css"]
+extra_javascript = ["javascripts/historico.js"]
 
 # Menu gerado por scripts/converter.py; não edite à mão entre as marcas.
 # nav-inicio
