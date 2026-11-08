@@ -48,7 +48,7 @@ lei e quiser ver o download atualizado localmente, rode o `exportar.py` de novo.
 
 1. Crie o repositório no GitHub (público) e envie o código.
 2. Em **Settings → Pages → Source**, escolha **GitHub Actions**.
-3. Troque `SEU-USUARIO` em `zensical.toml` pelo seu usuário do GitHub.
+3. Endereço publicado: <https://prefeiturabataypora.github.io/leis-bataypora/>.
 
 A cada push na `main`, o workflow `.github/workflows/pages.yml` gera e publica o site.
 
