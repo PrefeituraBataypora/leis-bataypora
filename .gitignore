@@ -1,0 +1,7 @@
+.venv/
+.cache/
+.cache-leis/
+site/
+docs/baixar/
+__pycache__/
+.DS_Store

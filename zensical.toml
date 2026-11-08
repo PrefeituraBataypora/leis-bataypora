@@ -1,0 +1,82 @@
+[project]
+site_name = "Legislação Municipal"
+site_description = "Legislação municipal de Batayporã (MS) em texto pesquisável e versionado"
+# Ajuste para o endereço do seu repositório no GitHub Pages
+site_url = "https://SEU-USUARIO.github.io/leis-bataypora/"
+repo_url = "https://github.com/SEU-USUARIO/leis-bataypora"
+edit_uri = "edit/main/docs/"
+copyright = "Prefeitura Municipal de Batayporã. Textos ainda em revisão."
+extra_css = ["stylesheets/extra.css"]
+
+# Menu gerado por scripts/converter.py; não edite à mão entre as marcas.
+# nav-inicio
+nav = [
+  { "Início" = "index.md" },
+  { "Lei Orgânica" = [
+    "lei-organica/index.md",
+    "lei-organica/lei-organica.md",
+  ] },
+  { "Estatuto dos Servidores (LC 003/2001)" = [
+    "estatuto-servidores/index.md",
+    "estatuto-servidores/lc-003-2001.md",
+    "estatuto-servidores/lc-012-2006.md",
+    "estatuto-servidores/lc-013-2006.md",
+    "estatuto-servidores/lc-017-2010.md",
+    "estatuto-servidores/lc-032-2015.md",
+    "estatuto-servidores/lc-037-2017.md",
+    "estatuto-servidores/lc-050-2020.md",
+    "estatuto-servidores/lc-055-2021.md",
+    "estatuto-servidores/lc-071-2025.md",
+  ] },
+  { "Código Tributário Municipal" = [
+    "codigo-tributario/index.md",
+    "codigo-tributario/lc-004-2001.md",
+    "codigo-tributario/lc-005-2001.md",
+    "codigo-tributario/lc-010-2003.md",
+    "codigo-tributario/lc-023-2013.md",
+    "codigo-tributario/lc-039-2017.md",
+    "codigo-tributario/lc-044-2019.md",
+    "codigo-tributario/lc-053-2020.md",
+    "codigo-tributario/lc-059-2022.md",
+    "codigo-tributario/lc-060-2022.md",
+  ] },
+]
+# nav-fim
+
+[project.theme]
+variant = "modern"
+language = "pt-BR"
+logo = "assets/brasao.png"
+favicon = "assets/brasao.png"
+features = [
+  # Sem "navigation.sections": cada categoria vira um item recolhível no menu lateral,
+  # e só a categoria da página aberta fica expandida
+  "navigation.indexes",
+  "navigation.top",
+  "navigation.footer",
+  "search.highlight",
+  "content.action.edit",
+  "content.action.view",
+  "toc.follow",
+]
+
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "indigo"
+toggle.icon = "material/weather-night"
+toggle.name = "Modo escuro"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "indigo"
+toggle.icon = "material/weather-sunny"
+toggle.name = "Modo claro"
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.tables]
+[project.markdown_extensions.toc]
+permalink = true
