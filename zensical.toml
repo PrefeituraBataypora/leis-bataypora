@@ -1,9 +1,8 @@
 [project]
 site_name = "Legislação Municipal"
 site_description = "Legislação municipal de Batayporã (MS) em texto pesquisável e versionado"
-# Ajuste para o endereço do seu repositório no GitHub Pages
-site_url = "https://SEU-USUARIO.github.io/leis-bataypora/"
-repo_url = "https://github.com/SEU-USUARIO/leis-bataypora"
+site_url = "https://prefeiturabataypora.github.io/leis-bataypora/"
+repo_url = "https://github.com/PrefeituraBataypora/leis-bataypora"
 edit_uri = "edit/main/docs/"
 copyright = "Prefeitura Municipal de Batayporã. Textos ainda em revisão."
 extra_css = ["stylesheets/extra.css"]
