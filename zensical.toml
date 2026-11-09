@@ -30,6 +30,7 @@ nav = [
   ] },
   { "Código Tributário Municipal" = [
     "codigo-tributario/index.md",
+    "codigo-tributario/lc-001-1991.md",
     "codigo-tributario/lc-004-2001.md",
     "codigo-tributario/lc-005-2001.md",
     "codigo-tributario/lc-010-2003.md",
@@ -39,6 +40,10 @@ nav = [
     "codigo-tributario/lc-053-2020.md",
     "codigo-tributario/lc-059-2022.md",
     "codigo-tributario/lc-060-2022.md",
+  ] },
+  { "Código de Posturas Municipal" = [
+    "codigo-posturas/index.md",
+    "codigo-posturas/lc-008-2003.md",
   ] },
 ]
 # nav-fim

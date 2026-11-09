@@ -55,6 +55,8 @@ def markdown_limpo(texto: str) -> str:
             continue
         linhas.append(linha)
     corpo = re.sub(r"\n{3,}", "\n\n", "\n".join(linhas)).strip() + "\n"
+    # Links para artigos da própria página (#art-N) só existem no site: no arquivo viram texto
+    corpo = re.sub(r"\[([^\]]+)\]\(#[^)]*\)", r"\1", corpo)
 
     # Nota de origem logo abaixo do título
     nota = f"*Texto em revisão, extraído por {dados.get('extracao', '?')}."

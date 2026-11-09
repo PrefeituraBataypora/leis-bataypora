@@ -22,6 +22,7 @@ escaneados).
 - [Lei Orgânica](lei-organica/index.md)
 - [Código Tributário Municipal](codigo-tributario/index.md)
 - [Estatuto dos Servidores (LC 003/2001)](estatuto-servidores/index.md)
+- [Código de Posturas Municipal](codigo-posturas/index.md)
 
 ## Como usar
 

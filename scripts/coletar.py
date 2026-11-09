@@ -22,6 +22,7 @@ CATEGORIAS = {
     "lei-organica-do-municipio-de-bataypora": ("lei-organica", "Lei Orgânica"),
     "003-e-suas-alteracoes": ("estatuto-servidores", "Estatuto dos Servidores (LC 003/2001)"),
     "codigo-tributario-municipal": ("codigo-tributario", "Código Tributário Municipal"),
+    "codigo-de-posturas-municipal": ("codigo-posturas", "Código de Posturas Municipal"),
 }
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -68,7 +69,8 @@ def main():
     CACHE.mkdir(parents=True, exist_ok=True)
     # Mantém o que o converter.py anotou (nome final do arquivo e hash do texto gerado),
     # para ele continuar reconhecendo as páginas revisadas à mão
-    anteriores = {f["url"]: f for f in json.loads(SAIDA.read_text())} if SAIDA.exists() else {}
+    lista_anterior = json.loads(SAIDA.read_text()) if SAIDA.exists() else []
+    anteriores = {f["url"]: f for f in lista_anterior if f.get("url")}
     fontes = []
     for slug, (pasta, nome) in CATEGORIAS.items():
         usados = set()
@@ -92,7 +94,8 @@ def main():
             })
             print(f"{pasta}: {item['titulo']} ({pdf.stat().st_size // 1024} KB)")
     # Leis acrescentadas a partir do .doc (não estão no site) não somem a cada coleta
-    fontes += [f for f in anteriores.values() if f.get("origem") == "doc"]
+    # (elas não têm url, então vêm da lista anterior inteira, não do dicionário por url)
+    fontes += [f for f in lista_anterior if f.get("origem") == "doc"]
     SAIDA.parent.mkdir(exist_ok=True)
     SAIDA.write_text(json.dumps(fontes, ensure_ascii=False, indent=2) + "\n")
     print(f"{len(fontes)} PDFs em {SAIDA.relative_to(RAIZ)}")

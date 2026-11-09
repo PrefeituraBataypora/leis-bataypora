@@ -8,6 +8,7 @@ hide:
 
 | Norma | Data | Ementa | Extração |
 |---|---|---|---|
+| [Lei Complementar nº 001/1991](lc-001-1991.md) | 11/12/1991 | — | doc |
 | [Lei Complementar nº 004/2001](lc-004-2001.md) | 04/12/2001 | Dispõe sobre alterações da Lei Complementar nº 01/91, de 11/12/1991 (Código Tributário Municipal), e dá outras providências. | doc |
 | [Lei Complementar nº 005/2001](lc-005-2001.md) | 21/12/2001 | Dispõe sobre alterações da Lei Complementar nº 01/91, de 11/12/1991 (Código Tributário Municipal), e dá outras providências. | doc |
 | [Lei Complementar nº 010/2003](lc-010-2003.md) | 22/12/2003 | Dispõe sobre alterações da Lei Complementar nº 01/91, de 11/12/1991 (Código Tributário Municipal), e dá outras providências. | doc |
