@@ -21,6 +21,60 @@ hide:
 
 Baixar: [PDF](../baixar/lei-organica/lei-organica.pdf){ .md-button download="lei-organica.pdf" } [Word (.docx)](../baixar/lei-organica/lei-organica.docx){ .md-button download="lei-organica.docx" } [Texto (.txt)](../baixar/lei-organica/lei-organica.txt){ .md-button download="lei-organica.txt" } [Markdown (.md)](../baixar/lei-organica/lei-organica.md.txt){ .md-button download="lei-organica.md" }
 
+!!! abstract "Índice"
+    | Divisão | Assunto | Artigos |
+    |---|---|---:|
+    | **TÍTULO I** | **DAS DISPOSIÇÕES PERMANENTES** | |
+    | &emsp;**Capítulo I** | **DA ORGANIZAÇÃO MUNICÍPIO** | |
+    | &emsp;&emsp;Seção I | DOS PRINCÍPIOS FUNDAMENTAIS | [1](#art-1-a) a [4](#art-4) |
+    | &emsp;&emsp;Seção II | DA ORGANIZAÇÃO POLÍTICO-ADMINISTRATIVA | [5](#art-5) e [6](#art-6) |
+    | &emsp;&emsp;Seção III | DOS BENS E DA COMPETÊNCIA | [7](#art-7) a [9](#art-9) |
+    | &emsp;**Capítulo II** | **DO PODER LEGISLATIVO** | |
+    | &emsp;&emsp;Seção I | DA CÂMARA MUNICIPAL | [10](#art-10) e [11](#art-11) |
+    | &emsp;&emsp;Seção II | DAS ATRIBUIÇÕES DA CÂMARA MUNICIPAL | [12](#art-12) a [14](#art-14) |
+    | &emsp;&emsp;Seção III | DOS VEREADORES | [15](#art-15) a [18](#art-18) |
+    | &emsp;&emsp;Seção IV | DAS REUNIÕES | [19](#art-19) |
+    | &emsp;&emsp;Seção V | DA MESA E DAS COMISSÕES | [20](#art-20) a [23](#art-23) |
+    | &emsp;&emsp;**Seção VI** | **DO PROCESSO LEGISLATIVO** | |
+    | &emsp;&emsp;&emsp;Subseção I | DISPOSIÇÃO GERAL | [24](#art-24) |
+    | &emsp;&emsp;&emsp;Subseção II | DA EMENDA À LEI ORGÂNICA DO MUNICÍPIO | [25](#art-25) |
+    | &emsp;&emsp;&emsp;Subseção III | DAS LEIS | [26](#art-26) a [33](#art-33) |
+    | &emsp;&emsp;Seção VII | DA FISCALIZAÇÃO CONTÁBIL, FINANCEIRA E ORÇAMENTÁRIA | [34](#art-34) a [37](#art-37) |
+    | &emsp;**Capítulo III** |  | |
+    | &emsp;&emsp;Seção I | DO PODER EXECUTIVO, DO PREFEITO E DO VICE-PREFEITO | [38](#art-38) a [46](#art-46) |
+    | &emsp;&emsp;Seção II | DAS ATRIBUIÇÕES DO PREFEITO | [47](#art-47) |
+    | &emsp;&emsp;Seção III | DA RESPONSABILIDADE DO PREFEITO | [48](#art-48) |
+    | &emsp;&emsp;Seção IV | DOS SECRETÁRIOS MUNICIPAIS | [49](#art-49) a [51](#art-51) |
+    | &emsp;&emsp;Seção V | DA PROCURADORIA GERAL DO MUNICÍPIO | [52](#art-52) a [55](#art-55) |
+    | &emsp;&emsp;Seção VI | DA GUARDA MUNICIPAL | [56](#art-56) e [57](#art-57) |
+    | &emsp;**Capítulo IV** | **DA TRIBUTAÇÃO E DO ORÇAMENTO** | |
+    | &emsp;&emsp;**Seção I** | **DO SISTEMA TRIBUTÁRIO MUNICIPAL** | |
+    | &emsp;&emsp;&emsp;Subseção I | DOS PRINCÍPIOS GERAIS | [58](#art-58) |
+    | &emsp;&emsp;&emsp;Subseção II | DAS LIMITAÇÕES DO PODER DE TRIBUTAR | [59](#art-59) a [63](#art-63) |
+    | &emsp;&emsp;&emsp;Subseção III | DOS IMPOSTOS DOS MUNICÍPIOS | [64](#art-64) |
+    | &emsp;&emsp;&emsp;Subseção IV | DA PARTICIPAÇÃO DO MUNICÍPIO NAS RECEITAS TRIBUTÁRIAS | [65](#art-65) a [72](#art-72) |
+    | &emsp;&emsp;**Seção II** | **DAS FINANÇAS PÚBLICAS** | |
+    | &emsp;&emsp;&emsp;Subseção I | DAS NORMAS GERAIS | [73](#art-73) a [77](#art-77) |
+    | &emsp;**Capítulo V** | **DA ORDEM ECONÔMICA E SOCIAL** | |
+    | &emsp;&emsp;Seção I | DOS PRINCÍPIOS GERAIS DA ATIVIDADE ECONÔMICA E SOCIAL | [78](#art-78) a [84](#art-84) |
+    | &emsp;&emsp;Seção II | DA POLÍTICA URBANA | [85](#art-85) e [86](#art-86) |
+    | &emsp;&emsp;**Seção III** | **DA ORDEM SOCIAL** | |
+    | &emsp;&emsp;&emsp;Subseção I | DISPOSIÇÕES GERAIS | [87](#art-87) a [89](#art-89) |
+    | &emsp;&emsp;&emsp;Subseção II | DA SAÚDE | [90](#art-90) a [100](#art-100) |
+    | &emsp;&emsp;&emsp;Subseção III | DA ASSISTÊNCIA SOCIAL | [101](#art-101) a [106](#art-106) |
+    | &emsp;&emsp;**Seção IV** | **DA EDUCAÇÃO, DA CULTURA E DO DESPORTO** | |
+    | &emsp;&emsp;&emsp;Subseção I | DA EDUCAÇÃO | [107](#art-107) a [121](#art-121) |
+    | &emsp;&emsp;&emsp;Subseção II | DA CULTURA | [122](#art-122) a [131](#art-131) |
+    | &emsp;&emsp;&emsp;Subseção III | DO DESPORTO E DO LAZER | [132](#art-132) a [141](#art-141) |
+    | &emsp;&emsp;&emsp;Subseção IV | DO MEIO AMBIENTE | [142](#art-142) a [155](#art-155) |
+    | &emsp;&emsp;&emsp;Subseção V | DA FAMÍLIA, DA CRIANÇA, DO ADOLESCENTE E DO IDOSO | [156](#art-156) a [158](#art-158) |
+    | &emsp;**Capítulo VI** | **DA ADMINISTRAÇÃO PÚBLICA** | |
+    | &emsp;&emsp;Seção I | DAS DISPOSIÇÕES GERAIS | [159](#art-159) a [166](#art-166) |
+    | &emsp;&emsp;Seção II | DOS SERVIDORES PÚBLICOS MUNICIPAIS | [167](#art-167) a [174](#art-174) |
+    | &emsp;&emsp;Seção III | DAS INFORMAÇÕES, DO DIREITO DE PETIÇÃO E DAS CERTIDÕES | [175](#art-175) |
+    | TÍTULO II | DAS DISPOSIÇÕES ORGANIZACIONAIS TRANSITÓRIAS | [1](#adct-art-1) a [17](#adct-art-17) |
+    | **[Emendas](#emenda-001-1990)** | **Emendas à Lei Orgânica publicadas no PDF** | |
+
 **LEI ORGÂNICA DO MUNICÍPIO DE BATAYPORÃ**
 { .centro }
 
