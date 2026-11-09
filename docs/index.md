@@ -22,7 +22,11 @@ escaneados).
 - [Lei Orgânica](lei-organica/index.md)
 - [Código Tributário Municipal](codigo-tributario/index.md)
 - [Estatuto dos Servidores (LC 003/2001)](estatuto-servidores/index.md)
+- [Plano de Cargos e Carreiras (LC 020/2012)](plano-cargos/index.md)
 - [Código de Posturas Municipal](codigo-posturas/index.md)
+- [Controladoria Geral](controladoria-geral/index.md)
+- [Estrutura Administrativa](estrutura-administrativa/index.md)
+- [Plano Diretor Municipal](plano-diretor/index.md)
 
 ## Como usar
 

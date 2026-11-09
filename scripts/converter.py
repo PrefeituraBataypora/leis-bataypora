@@ -37,6 +37,22 @@ SEM_NUMERO = {
         ("Emendas à Lei Orgânica", "emendas", "2024-03-18"),
 }
 
+# PDFs em que o identificador automático erra (o texto cita outra lei antes do próprio número,
+# ou o número saiu ilegível): título, nome do arquivo e data conferidos à mão
+IDENTIFICADAS = {
+    "https://ecrie.com.br/sistema/conteudos/arquivo/a_222_0_1_25092025083657.pdf":
+        ("Lei Complementar nº 020/2012", "lc-020-2012", "2012-04-04"),
+    "https://ecrie.com.br/sistema/conteudos/arquivo/a_222_0_1_25092025084418.pdf":
+        ("Lei Complementar nº 025/2013", "lc-025-2013", "2013-10-16"),
+    "https://ecrie.com.br/sistema/conteudos/arquivo/a_222_0_1_24092025103655.pdf":
+        ("Lei Complementar nº 045/2019", "lc-045-2019", "2019-12-19"),
+    "https://ecrie.com.br/sistema/conteudos/arquivo/a_222_0_1_24092025105520.pdf":
+        ("Lei Complementar nº 064/2024", "lc-064-2024", "2024-07-17"),
+    # No site o link se chama "Lei Complementar 073", mas o PDF é a LC 072/2025
+    "https://ecrie.com.br/sistema/conteudos/arquivo/a_222_0_1_26092025104051.pdf":
+        ("Lei Complementar nº 072/2025", "lc-072-2025", "2025-09-17"),
+}
+
 MESES = {m: i for i, m in enumerate(
     "janeiro fevereiro março abril maio junho julho agosto setembro outubro novembro dezembro".split(), 1)}
 DATA = re.compile(r"\bde\s+(\d{1,2})\s*[º°o]?\s+de\s+([a-zç]+)\s+de\s+(\d\.?\d{3})", re.I)
@@ -181,15 +197,17 @@ def identificar(texto: str) -> tuple[str | None, str | None, str | None, str | N
     if e:
         ementa = " ".join(e.group(1).split()).rstrip(".") + "."
     # O número da própria lei vem antes da ementa; depois dela aparecem as leis citadas
-    m = re.search(r"\blei\s+(complementar\s+)?(?:municipal\s+)?n\s*[º°oO.]*[\s.,]*(\d{1,3})\s*"
+    m = re.search(r"\blei\s+(complementar\s+)?(?:municipal\s+)?n\s*[º°oO.]*[\s.,]*(\d{1,3}(?:\.\d{3})?|\d{4})\s*"
                   r"(?:[/.-]\s*(\d{2,4})|,?\s*de\s+\d{1,2}\s*[º°]?\s+de\s+[a-zç]+\s+de\s+(\d{4}))",
                   inicio[:e.start()] if e else inicio, re.I)
     if m:
-        num, ano = int(m.group(2)), m.group(3) or m.group(4)
+        num, ano = int(m.group(2).replace(".", "")), m.group(3) or m.group(4)
         if len(ano) == 2:
             ano = ("19" if int(ano) > 50 else "20") + ano
         tipo = "Lei Complementar" if m.group(1) else "Lei"
-        titulo = f"{tipo} nº {num:03d}/{ano}"
+        # Leis com 4 dígitos levam ponto de milhar no título ("Lei nº 1.131/2016")
+        numero = f"{num:03d}" if num < 1000 else f"{num:,}".replace(",", ".")
+        titulo = f"{tipo} nº {numero}/{ano}"
         slug = f"{'lc' if m.group(1) else 'lei'}-{num:03d}-{ano}"
         # A data da lei vem logo depois do número ("nº 003/2001 de 30 de novembro de 2001")
         d = DATA.search(inicio, m.start(), m.end() + 60)
@@ -344,6 +362,8 @@ def main():
             # Documentos sem número próprio: o identificador acharia leis citadas no texto
             f["titulo_detectado"], slug, f["data"] = SEM_NUMERO[f["url"]]
             f["ementa"] = None
+        elif f["url"] in IDENTIFICADAS:
+            f["titulo_detectado"], slug, f["data"] = IDENTIFICADAS[f["url"]]
         pasta = f["categoria"]
         slug = slug or Path(f["arquivo"]).stem
         while f"{pasta}/{slug}" in usados:
@@ -358,8 +378,12 @@ def main():
         if not forcar and not pode_sobrescrever(destino, novo, f.get("hash_gerado")):
             preservadas.append(f["arquivo"])
             # O índice mostra a origem que a página editada declara (ex.: refeita a partir do .doc)
-            if re.search(r"^extracao: .*\.doc", destino.read_text(), re.M):
+            pagina = destino.read_text()
+            if re.search(r"^extracao: .*\.doc", pagina, re.M):
                 f["extracao"] = "doc"
+            # ...e a ementa revisada na página, no lugar da que o OCR leu do PDF
+            if m := re.search(r'^ementa: "(.+)"$', pagina, re.M):
+                f["ementa"] = m.group(1).replace('\\"', '"')
             continue
         destino.write_text(novo)
         f["hash_gerado"] = sha256(novo)

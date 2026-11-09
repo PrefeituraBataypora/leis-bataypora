@@ -95,6 +95,9 @@ def exportar(pagina: Path, modelo: Path):
     args = ["-M", "lang=pt-BR", "-M", f"pagetitle={titulo}"]
 
     Path(f"{destino}.md.txt").write_text(md)
+    # Imagens (organogramas): no PDF e no Word entram pelo caminho completo do arquivo
+    md = re.sub(r"(!\[[^\]]*\]\()([^)\s]+)\)",
+                lambda m: f"{m.group(1)}{(pagina.parent / m.group(2)).resolve()})", md)
     pypandoc.convert_text(md, "plain", format=ENTRADA, outputfile=f"{destino}.txt",
                           extra_args=args + ["--columns=90"])
     pypandoc.convert_text(md, "docx", format=ENTRADA, outputfile=f"{destino}.docx",
@@ -106,7 +109,7 @@ def exportar(pagina: Path, modelo: Path):
     with tempfile.TemporaryDirectory() as tmp:
         fonte = Path(tmp) / "lei.typ"
         fonte.write_text(typ)
-        typst.compile(str(fonte), output=f"{destino}.pdf")
+        typst.compile(str(fonte), output=f"{destino}.pdf", root="/")
     return pagina.relative_to(DOCS)
 
 

@@ -21,8 +21,10 @@ BASE = "https://bataypora.ms.gov.br/cidadao/legislacao-municipal/"
 CATEGORIAS = {
     "lei-organica-do-municipio-de-bataypora": ("lei-organica", "Lei Orgânica"),
     "003-e-suas-alteracoes": ("estatuto-servidores", "Estatuto dos Servidores (LC 003/2001)"),
+    "020-e-suas-alteracoes": ("plano-cargos", "Plano de Cargos e Carreiras (LC 020/2012)"),
     "codigo-tributario-municipal": ("codigo-tributario", "Código Tributário Municipal"),
     "codigo-de-posturas-municipal": ("codigo-posturas", "Código de Posturas Municipal"),
+    "controladoria-geral": ("controladoria-geral", "Controladoria Geral"),
 }
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -95,7 +97,8 @@ def main():
             print(f"{pasta}: {item['titulo']} ({pdf.stat().st_size // 1024} KB)")
     # Leis acrescentadas a partir do .doc (não estão no site) não somem a cada coleta
     # (elas não têm url, então vêm da lista anterior inteira, não do dicionário por url)
-    fontes += [f for f in lista_anterior if f.get("origem") == "doc"]
+    # e as leis adicionadas à mão a partir de um link de PDF que não está nas categorias do site
+    fontes += [f for f in lista_anterior if f.get("origem") in ("doc", "manual")]
     SAIDA.parent.mkdir(exist_ok=True)
     SAIDA.write_text(json.dumps(fontes, ensure_ascii=False, indent=2) + "\n")
     print(f"{len(fontes)} PDFs em {SAIDA.relative_to(RAIZ)}")

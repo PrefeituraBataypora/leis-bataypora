@@ -28,6 +28,24 @@ nav = [
     "estatuto-servidores/lc-055-2021.md",
     "estatuto-servidores/lc-071-2025.md",
   ] },
+  { "Plano de Cargos e Carreiras (LC 020/2012)" = [
+    "plano-cargos/index.md",
+    "plano-cargos/lc-020-2012.md",
+    "plano-cargos/lc-021-2013.md",
+    "plano-cargos/lc-025-2013.md",
+    "plano-cargos/lc-027-2013.md",
+    "plano-cargos/lc-028-2014.md",
+    "plano-cargos/lc-031-2015.md",
+    "plano-cargos/lc-035-2015.md",
+    "plano-cargos/lc-036-2016.md",
+    "plano-cargos/lc-038-2017.md",
+    "plano-cargos/lc-042-2019.md",
+    "plano-cargos/lc-045-2019.md",
+    "plano-cargos/lc-057-2021.md",
+    "plano-cargos/lc-064-2024.md",
+    "plano-cargos/lc-068-2025.md",
+    "plano-cargos/lc-072-2025.md",
+  ] },
   { "Código Tributário Municipal" = [
     "codigo-tributario/index.md",
     "codigo-tributario/lc-001-1991.md",
@@ -44,6 +62,19 @@ nav = [
   { "Código de Posturas Municipal" = [
     "codigo-posturas/index.md",
     "codigo-posturas/lc-008-2003.md",
+  ] },
+  { "Controladoria Geral" = [
+    "controladoria-geral/index.md",
+    "controladoria-geral/lei-1131-2016.md",
+  ] },
+  { "Estrutura Administrativa" = [
+    "estrutura-administrativa/index.md",
+    "estrutura-administrativa/lc-070-2025.md",
+  ] },
+  { "Plano Diretor Municipal" = [
+    "plano-diretor/index.md",
+    "plano-diretor/lc-024-2013.md",
+    "plano-diretor/lc-029-2014.md",
   ] },
 ]
 # nav-fim
