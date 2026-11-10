@@ -29,6 +29,7 @@ escaneados).
 - [Estrutura Administrativa](estrutura-administrativa/index.md)
 - [Plano Diretor Municipal](plano-diretor/index.md)
 - [Resoluções da Educação (SECEL)](resolucoes-secel/index.md)
+- [Leis Ordinárias](leis-ordinarias/index.md)
 
 ## Como usar
 
