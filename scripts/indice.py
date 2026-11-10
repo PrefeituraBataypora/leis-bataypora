@@ -102,7 +102,7 @@ def aplicar(pagina: Path):
 
 
 def main():
-    paginas = [Path(p).resolve() for p in sys.argv[1:]] or sorted(DOCS.glob("*/*.md"))
+    paginas = [Path(p).resolve() for p in sys.argv[1:]] or sorted(DOCS.glob("**/*.md"))
     for p in paginas:
         rel = p.relative_to(DOCS).as_posix()
         if p.name == "index.md" or rel in SEM_INDICE or rel.startswith("baixar/"):

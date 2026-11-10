@@ -115,7 +115,7 @@ def exportar(pagina: Path, modelo: Path):
 
 def main():
     shutil.rmtree(SAIDA, ignore_errors=True)
-    paginas = [p for p in sorted(DOCS.glob("*/*.md")) if p.name != "index.md" and SAIDA not in p.parents]
+    paginas = [p for p in sorted(DOCS.glob("**/*.md")) if p.name != "index.md" and SAIDA not in p.parents]
     with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor() as pool:
         modelo = modelo_docx(Path(tmp) / "modelo.docx")
         for feito in pool.map(lambda p: exportar(p, modelo), paginas):

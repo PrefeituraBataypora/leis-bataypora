@@ -273,7 +273,9 @@ def gerar_pagina(fonte: dict, texto_paginas: list[str], metodos: list[str]) -> s
 
 def botoes_download(arquivo: str) -> str:
     """Botões para os arquivos gerados por scripts/exportar.py em docs/baixar/."""
-    base = f"../baixar/{arquivo.removesuffix('.md')}"
+    # caminho relativo à página (leis de categorias com subpastas, como leis-ordinarias/2001, ficam mais fundo)
+    subir = "../" * (len(Path(arquivo).parts) - 1)
+    base = f"{subir}baixar/{arquivo.removesuffix('.md')}"
     nome = Path(arquivo).stem
     # O Markdown fica salvo como .md.txt (um .md em docs/ viraria página); o download o renomeia
     formatos = [("PDF", ".pdf", ".pdf"), ("Word (.docx)", ".docx", ".docx"),
@@ -301,12 +303,62 @@ def gerar_indice(categoria: str, nome: str, leis: list[dict]):
     (DOCS / categoria / "index.md").write_text("\n".join(linhas) + "\n")
 
 
+def titulo_pagina(pagina: Path) -> str:
+    m = re.search(r'^title: "?(.*?)"?$', pagina.read_text(), re.M)
+    return m.group(1) if m else pagina.parent.name
+
+
+def subpastas(grupo: str) -> list[str]:
+    """Subpastas de um grupo (ex.: os anos de leis-ordinarias), as que têm index.md, em ordem."""
+    return sorted(p.parent.name for p in (DOCS / grupo).glob("*/index.md"))
+
+
+def gerar_indice_grupo(grupo: str, fontes: list[dict]):
+    """Página de entrada de um grupo de categorias (ex.: Leis Ordinárias), com cada subpasta e quantas leis tem."""
+    pagina = DOCS / grupo / "index.md"
+    nome = titulo_pagina(pagina)
+    texto = pagina.read_text()
+    linhas = ["| Ano | Leis |", "|---|---:|"]
+    for sub in subpastas(grupo):
+        n = sum(1 for f in fontes if f["categoria"] == f"{grupo}/{sub}")
+        linhas.append(f"| [{sub}]({sub}/index.md) | {n or '—'} |")
+    # a tabela fica entre as marcas; o texto antes e depois é editado à mão
+    inicio, fim = "<!-- lista-inicio -->", "<!-- lista-fim -->"
+    if inicio not in texto:
+        texto = texto.rstrip() + f"\n\n{inicio}\n{fim}\n"
+    a, b = texto.index(inicio) + len(inicio), texto.index(fim)
+    pagina.write_text(texto[:a] + "\n" + "\n".join(linhas) + "\n" + texto[b:])
+    print(f"índice do grupo {nome}")
+
+
 def gerar_nav(fontes: list[dict]):
-    """Reescreve o nav do zensical.toml (entre as marcas nav-inicio e nav-fim)."""
+    """Reescreve o nav do zensical.toml (entre as marcas nav-inicio e nav-fim).
+
+    Categorias com subpasta (ex.: leis-ordinarias/2001) ficam dentro de um item do grupo (Leis Ordinárias),
+    com uma entrada por subpasta que tenha index.md, mesmo as que ainda não têm leis.
+    """
     config = RAIZ / "zensical.toml"
     texto = config.read_text()
+    # leis marcadas com "ignorar" não têm página: no menu virariam itens que não levam a lugar nenhum
+    fontes = [f for f in fontes if not f.get("ignorar")]
     linhas = ["nav = [", '  { "Início" = "index.md" },']
+    grupos_feitos = set()
     for cat in dict.fromkeys(f["categoria"] for f in fontes):
+        if "/" in cat:
+            grupo = cat.split("/")[0]
+            if grupo in grupos_feitos:
+                continue
+            grupos_feitos.add(grupo)
+            linhas.append(f"  {{ {yaml_str(titulo_pagina(DOCS / grupo / 'index.md'))} = [")
+            linhas.append(f'    "{grupo}/index.md",')
+            for sub in subpastas(grupo):
+                leis = sorted((f for f in fontes if f["categoria"] == f"{grupo}/{sub}"), key=lambda f: f["arquivo"])
+                linhas.append(f"    {{ {yaml_str(sub)} = [")
+                linhas.append(f'      "{grupo}/{sub}/index.md",')
+                linhas += [f'      "{f["arquivo"]}",' for f in leis]
+                linhas.append("    ] },")
+            linhas.append("  ] },")
+            continue
         leis = sorted((f for f in fontes if f["categoria"] == cat), key=lambda f: f["arquivo"])
         linhas.append(f"  {{ {yaml_str(leis[0]['categoria_nome'])} = [")
         linhas.append(f'    "{cat}/index.md",')
@@ -392,6 +444,8 @@ def main():
     for cat in dict.fromkeys(f["categoria"] for f in fontes):
         leis = [f for f in fontes if f["categoria"] == cat]
         gerar_indice(cat, leis[0]["categoria_nome"], leis)
+    for grupo in dict.fromkeys(c.split("/")[0] for c in (f["categoria"] for f in fontes) if "/" in c):
+        gerar_indice_grupo(grupo, fontes)
     gerar_nav(fontes)
 
     for f in com_pdf:
