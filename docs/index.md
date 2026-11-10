@@ -28,6 +28,7 @@ escaneados).
 - [Controladoria Geral](controladoria-geral/index.md)
 - [Estrutura Administrativa](estrutura-administrativa/index.md)
 - [Plano Diretor Municipal](plano-diretor/index.md)
+- [Resoluções da Educação (SECEL)](resolucoes-secel/index.md)
 
 ## Como usar
 

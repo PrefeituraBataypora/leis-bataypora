@@ -817,5 +817,22 @@
     "ementa": "Altera os Incisos IV e V do art. 50 da Lei Complementar nº 024/2013, de 23/08/2013 - Plano Diretor Participativo do Município de Batayporã, e dá outras providências.",
     "data": "2014-07-04",
     "extracao": "doc"
+  },
+  {
+    "titulo": "Resolução SECEL nº 009/2026",
+    "titulo_link": "",
+    "url": "https://ecrie.com.br/sistema/conteudos/arquivo/a_222_0_1_10112026093943.pdf",
+    "categoria": "resolucoes-secel",
+    "categoria_nome": "Resoluções da Educação (SECEL)",
+    "pagina_origem": "https://bataypora.ms.gov.br/cidadao/legislacao-municipal/resolucao-secel-n-0092026",
+    "arquivo": "resolucoes-secel/resolucao-secel-009-2026.md",
+    "pdf_local": "lei.pdf",
+    "sha256": "2d187cd192342d60012d4658c662d92ead6cd1ee26d440fa02f5923392bd9999",
+    "tamanho_bytes": 65904,
+    "origem": "manual",
+    "titulo_detectado": "Resolução SECEL nº 009/2026",
+    "ementa": "Institui o Protocolo de Prevenção, Registro, Acompanhamento e Encaminhamento de Casos de Racismo, Injúria Racial e Discriminação Étnico-Racial no âmbito da Rede Municipal de Ensino de Batayporã-MS e dá outras providências.",
+    "data": "2026-07-08",
+    "extracao": "texto"
   }
 ]
