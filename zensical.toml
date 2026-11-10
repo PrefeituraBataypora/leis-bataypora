@@ -46,6 +46,17 @@ nav = [
     "plano-cargos/lc-068-2025.md",
     "plano-cargos/lc-072-2025.md",
   ] },
+  { "Plano de Cargos do Magistério (LC 018/2011)" = [
+    "plano-cargos-magisterio/index.md",
+    "plano-cargos-magisterio/lc-018-2011.md",
+    "plano-cargos-magisterio/lc-019-2012.md",
+    "plano-cargos-magisterio/lc-022-2013.md",
+    "plano-cargos-magisterio/lc-026-2013.md",
+    "plano-cargos-magisterio/lc-033-2015.md",
+    "plano-cargos-magisterio/lc-034-2015.md",
+    "plano-cargos-magisterio/lc-047-2020.md",
+    "plano-cargos-magisterio/lc-048-2020.md",
+  ] },
   { "Código Tributário Municipal" = [
     "codigo-tributario/index.md",
     "codigo-tributario/lc-001-1991.md",
