@@ -374,8 +374,10 @@ def converter(num, extras=None):
         assert a in texto, (num, a)
         texto = texto.replace(a, b)
     texto = texto.replace("\\$", "$")  # o pandoc escapa o cifrão, mas o Markdown do site mostraria a barra
-    # CPF de pessoas citadas nas leis (doações, cessões) não vai para o site
-    texto = re.sub(r"\d{3}\s?\.\s?\d{3}\s?\.\s?\d{3}\s?[-–]\s?\d{2}", "[omitido]", texto).replace("[omitido] e [omitido]", "[omitidos]")
+    # CPF e RG de pessoas citadas nas leis (doações, cessões) não vão para o site
+    texto = re.sub(r"\d{3}\s?\.\s?\d{3}\s?\.\s?\d{3}\s?[-–]\s?\d{2}", "[omitido]", texto)
+    texto = re.sub(r"\b[\dX.\-]*\d[\dX.\-]*\s?/\s?SSP\s?[/-]\s?[A-Z]{2}\b", "[omitido]", texto)  # RG: número/SSP/UF
+    texto = texto.replace("RG [omitido] nº e", "RG [omitido] e").replace("[omitido] e [omitido]", "[omitidos]")
     # nome e cargo de quem assina em parágrafos separados viram um bloco só, centralizado
     texto = re.sub(r"\*\*([^*\n]+)\*\*(?:\n\{ \.centro \})?\n\n\*\*(Prefeito Municipal|Secretário|Secretária|Vice-Prefeito)\*\*(?:\n\{ \.centro \})?",
                    r"**\1**\n\2\n{ .centro }", texto)
