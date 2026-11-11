@@ -31,13 +31,25 @@ CARGO = re.compile(r"^(\d+)\s+(CC\s*\d+\s*-.*?)\s+R\\\$\s*([\d.,]+)$")
 TOTAL = re.compile(r"^\*\*TOTAL\s*-\s*R\\\$\s*([\d.,]+)\*\*$")
 
 # leis do orçamento em que o Word pôs cada coluna das tabelas numa célula só
-ORCAMENTOS = {("681", "2005")}
+ORCAMENTOS = {("681", "2005"), ("718", "2006")}
 # anexos desenhados no Word que viram imagem: (ano, lei) -> (começo do trecho a cortar, markdown no lugar)
 MAPAS = {}
 # arquivos extras (anexos em .doc separados) a juntar no fim da lei: (ano, lei) -> [nomes em md2/ ou "md:texto"]
 EXTRAS = {}
 # acertos pontuais no texto final: (ano, lei) -> [(trecho, novo)]
 CORRECOES = {
+    ("2006", "718"): [("1.  **- POR ÓRGÃOS DA ADMINISTRAÇÃO**", "**3.1 - POR ÓRGÃOS DA ADMINISTRAÇÃO**")],
+    ("2006", "719"): [("**DO CONSELHO MUNICIPAL DOS DIREITOS DA CRIANÇA E DO**\n\n**ADOLESCENTE**",
+                       "**DO CONSELHO MUNICIPAL DOS DIREITOS DA CRIANÇA E DO ADOLESCENTE**"),
+                      ("**DO FUNDO MUNICIPAL DOS DIREITOS DA CRIANÇA E DO**\n\n**ADOLESCENTE**\n",
+                       "**DO FUNDO MUNICIPAL DOS DIREITOS DA CRIANÇA E DO ADOLESCENTE**\n{ .centro }\n"),
+                      ("**DA ESTRUTURA**\n", "**DA ESTRUTURA**\n{ .centro }\n"),
+                      ("**DO CONTROLE DO CONSELHO TUTELAR**\n", "**DO CONTROLE DO CONSELHO TUTELAR**\n{ .centro }\n"),
+                      ("**DO PROCESSO DISCIPLINAR**\n", "**DO PROCESSO DISCIPLINAR**\n{ .centro }\n"),
+                      ("**DAS DISPOSIÇÕES FINAIS**\n", "**DAS DISPOSIÇÕES FINAIS**\n{ .centro }\n")],
+    ("2006", "708"): [("**Arrecadação do primeiro período/2005**\n{ .centro }", "Arrecadação do primeiro período/2005"),
+                      ("1.  Arrecadação", "1\\. Arrecadação"), ("2.  Arrecadação", "2\\. Arrecadação"),
+                      ("3.  Receita", "3\\. Receita")],
     ("2005", "681"): [("1.  **- POR ÓRGÃOS DA ADMINISTRAÇÃO**", "**3.1 - POR ÓRGÃOS DA ADMINISTRAÇÃO**")],
     ("2005", "656"): [("1.  Identificação do Projeto:", "1\\. Identificação do Projeto:"),
                       ("1.  \\- Título", "1.1 - Título"), ("2.  \\- Área", "1.2 - Área"), ("3.  \\- Público", "1.3 - Público"),
@@ -256,6 +268,25 @@ def acertar_tabelas(texto):
     return "\n\n".join(out)
 
 
+def citacoes(texto):
+    """Nova redação citada (“Art ...”): o pandoc só põe o primeiro parágrafo na citação e deixa o itálico
+    do Word solto; junta os parágrafos até o fecha-aspas numa citação só, sem o itálico."""
+    bs, out, k = texto.split("\n\n"), [], 0
+    limpa = lambda b: re.sub(r"^(>\s*)+", "", b).replace("*", "").strip()
+    fecha = lambda b: re.search(r"”\.?$", limpa(b))
+    while k < len(bs):
+        b = bs[k]
+        if b.startswith("> ") and "\n>" not in b and re.match(r"^[“\"]Art", limpa(b)):
+            fim = next((j for j in range(k, min(k + 40, len(bs))) if fecha(bs[j])), None)
+            if fim is not None:
+                out.append("\n>\n".join("> " + limpa(x) for x in bs[k:fim + 1]))
+                k = fim + 1
+                continue
+        out.append(b)
+        k += 1
+    return "\n\n".join(out)
+
+
 def ler_md2(nome):
     return next(f for f in (SCR / "md2").iterdir() if nfc(f.name) == nome).read_text()
 
@@ -370,17 +401,25 @@ def converter(num, extras=None):
         texto = re.sub(r"<table.*?</table>", lambda m: html_simples(m.group(0)), texto, flags=re.S)
     texto = acertar_tabelas(texto)
     texto = re.sub(r"(\{ \.centro \}\n)+", "{ .centro }\n", texto)
+    if ANO >= "2006":
+        texto = citacoes(texto)
     for a, b in CORRECOES.get((ANO, num), []):
         assert a in texto, (num, a)
         texto = texto.replace(a, b)
     texto = texto.replace("\\$", "$")  # o pandoc escapa o cifrão, mas o Markdown do site mostraria a barra
     # CPF e RG de pessoas citadas nas leis (doações, cessões) não vão para o site
     texto = re.sub(r"\d{3}\s?\.\s?\d{3}\s?\.\s?\d{3}\s?[-–]\s?\d{2}", "[omitido]", texto)
-    texto = re.sub(r"\b[\dX.\-]*\d[\dX.\-]*\s?/\s?SSP\s?[/-]\s?[A-Z]{2}\b", "[omitido]", texto)  # RG: número/SSP/UF
+    texto = re.sub(r"\b[\dX.\-]*\d[\dX.\-]*\s?(?:/\s?)?SSP\s?[/-]?\s?[A-Z]{2}\b", "[omitido]", texto)  # RG: número/SSP/UF
     texto = texto.replace("RG [omitido] nº e", "RG [omitido] e").replace("[omitido] e [omitido]", "[omitidos]")
     # nome e cargo de quem assina em parágrafos separados viram um bloco só, centralizado
     texto = re.sub(r"\*\*([^*\n]+)\*\*(?:\n\{ \.centro \})?\n\n\*\*(Prefeito Municipal|Secretário|Secretária|Vice-Prefeito)\*\*(?:\n\{ \.centro \})?",
                    r"**\1**\n\2\n{ .centro }", texto)
+    if ANO >= "2006":
+        # nome e cargo em linhas separadas, cada um centralizado (no Markdown, uma quebra simples junta as linhas)
+        texto = re.sub(r"^(\*\*[^*\n]+\*\*)\n(?![{|>])([^\n]+)\n\{ \.centro \}", r"\1\n{ .centro }\n\n\2\n{ .centro }",
+                       texto, flags=re.M)
+        texto = re.sub(r"(\{ \.centro \}\n\n)\*(Secretário|Secretária|Prefeito Municipal)\*$", r"\1\2\n{ .centro }",
+                       texto, flags=re.M)
     if (ANO, num) in MAPAS:
         corte, novo = MAPAS[(ANO, num)]
         assert corte in texto, (num, corte)
