@@ -17,10 +17,10 @@ As leis ordinárias do Município, separadas pelo ano de publicação. Escolha o
 | [2004](2004/index.md) | 18 |
 | [2005](2005/index.md) | 44 |
 | [2006](2006/index.md) | 38 |
-| [2007](2007/index.md) | — |
-| [2008](2008/index.md) | — |
-| [2009](2009/index.md) | — |
-| [2010](2010/index.md) | — |
+| [2007](2007/index.md) | 29 |
+| [2008](2008/index.md) | 43 |
+| [2009](2009/index.md) | 40 |
+| [2010](2010/index.md) | 56 |
 | [2011](2011/index.md) | — |
 | [2012](2012/index.md) | — |
 | [2013](2013/index.md) | — |
