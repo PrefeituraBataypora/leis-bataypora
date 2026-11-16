@@ -25,8 +25,9 @@ DOCS = RAIZ / "docs"
 SAIDA = DOCS / "baixar"
 
 FRONT_MATTER = re.compile(r"\A---\n(.*?)\n---\n", re.S)
-# Sem citações: "@" em texto de OCR viraria referência bibliográfica
-ENTRADA = "markdown-citations"
+# Sem citações: "@" em texto de OCR viraria referência bibliográfica; sem fórmulas: o texto entre
+# dois "$" (Cr$, CR$) viraria fórmula matemática, e o Typst recusa o resultado
+ENTRADA = "markdown-citations-tex_math_dollars"
 # Linhas só de atributos ({ #art-1 }, { .centro }) e os botões de download só valem no site
 SO_DO_SITE = re.compile(r"^\{:?\s*[#.][^}]*\}$|\.md-button", re.M)
 
