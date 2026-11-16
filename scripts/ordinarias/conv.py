@@ -1163,6 +1163,7 @@ def preparar(md):
     """Ajustes na saída do pandoc antes de separar os parágrafos."""
     md = md.replace("<!-- -->", "")
     md = md.replace('<span class="mark"></span>', "")  # marca-texto vazio do Word
+    md = re.sub(r'\*\*([“”"])\*\*', r"\1", md)  # aspa sozinha em negrito
     # sobrescritos do Word (1^o^, 3^a^) viram os ordinais
     md = re.sub(r"\^(?:o|º)\.?\\?\s*\^", "º", md)
     md = re.sub(r"\^a\^", "ª", md)

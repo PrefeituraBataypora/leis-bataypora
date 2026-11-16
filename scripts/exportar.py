@@ -88,6 +88,28 @@ def modelo_docx(destino: Path) -> Path:
     return destino
 
 
+FUNCAO = re.compile(r"#(?:strong|emph|underline|strike|smallcaps|super|sub|highlight)\[")
+
+
+def escapar_depois_de_funcao(typ: str) -> str:
+    """Em Typst, "#strong[...]" seguido de ".", "(" ou "[" continua a chamada ("#strong[x].desde" é um campo).
+    Algumas versões do Pandoc não escapam esse caractere (como em **”**.desde): escapa aqui."""
+    posicoes = []
+    for m in FUNCAO.finditer(typ):  # inclusive as chamadas dentro de outras
+        nivel, j = 1, m.end()
+        while j < len(typ) and nivel:
+            if typ[j] == "\\":
+                j += 2
+                continue
+            nivel += {"[": 1, "]": -1}.get(typ[j], 0)
+            j += 1
+        if j < len(typ) and typ[j] in ".([":
+            posicoes.append(j)
+    for j in sorted(set(posicoes), reverse=True):
+        typ = typ[:j] + "\\" + typ[j:]
+    return typ
+
+
 def exportar(pagina: Path, modelo: Path):
     destino = SAIDA / pagina.relative_to(DOCS).with_suffix("")
     destino.parent.mkdir(parents=True, exist_ok=True)
@@ -107,6 +129,7 @@ def exportar(pagina: Path, modelo: Path):
                                 extra_args=args + ["--standalone", "-V", "papersize=a4",
                                                    "-V", "fontsize=11pt", "-V", "margin.x=2.5cm",
                                                    "-V", "margin.y=2.5cm"])
+    typ = escapar_depois_de_funcao(typ)
     with tempfile.TemporaryDirectory() as tmp:
         fonte = Path(tmp) / "lei.typ"
         fonte.write_text(typ)
