@@ -110,7 +110,12 @@ def exportar(pagina: Path, modelo: Path):
     with tempfile.TemporaryDirectory() as tmp:
         fonte = Path(tmp) / "lei.typ"
         fonte.write_text(typ)
-        typst.compile(str(fonte), output=f"{destino}.pdf", root="/")
+        try:
+            typst.compile(str(fonte), output=f"{destino}.pdf", root="/")
+        except typst.TypstError as erro:
+            # Um PDF que falha não pode derrubar a publicação do site inteiro: fica sem o PDF só esta lei
+            Path(f"{destino}.pdf").unlink(missing_ok=True)
+            return f"ERRO NO PDF: {pagina.relative_to(DOCS)}: {erro}"
     return pagina.relative_to(DOCS)
 
 
@@ -119,8 +124,15 @@ def main():
     paginas = [p for p in sorted(DOCS.glob("**/*.md")) if p.name != "index.md" and SAIDA not in p.parents]
     with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor() as pool:
         modelo = modelo_docx(Path(tmp) / "modelo.docx")
+        erros = []
         for feito in pool.map(lambda p: exportar(p, modelo), paginas):
-            print(f"exportado: {feito}")
+            if isinstance(feito, str):
+                erros.append(feito)
+            print(feito if isinstance(feito, str) else f"exportado: {feito}")
+    if erros:
+        print(f"\n{len(erros)} página(s) ficaram sem PDF:", *erros, sep="\n")
+        for e in erros[:10]:  # anotações do GitHub Actions, visíveis no resumo da execução
+            print("::warning::" + e.replace("\n", " ")[:900])
 
 
 if __name__ == "__main__":
