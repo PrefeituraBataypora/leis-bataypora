@@ -19,24 +19,19 @@ escaneados).
 
 ## Categorias
 
-- [Lei Orgânica](lei-organica/index.md)
-- [Código Tributário Municipal](codigo-tributario/index.md)
-- [Estatuto dos Servidores (LC 003/2001)](estatuto-servidores/index.md)
-- [Plano de Cargos e Carreiras (LC 020/2012)](plano-cargos/index.md)
-- [Plano de Cargos do Magistério (LC 018/2011)](plano-cargos-magisterio/index.md)
-- [Código de Posturas Municipal](codigo-posturas/index.md)
-- [Controladoria Geral](controladoria-geral/index.md)
-- [Estrutura Administrativa](estrutura-administrativa/index.md)
-- [Plano Diretor Municipal](plano-diretor/index.md)
-- [Resoluções da Educação (SECEL)](resolucoes-secel/index.md)
-- [Leis Ordinárias](leis-ordinarias/index.md)
+<div class="cartoes" markdown>
 
-## Como usar
+- [:material-file-document-outline: Leis Ordinárias](leis-ordinarias/index.md)
+- [:material-bank: Lei Orgânica](lei-organica/index.md)
+- [:material-calculator-variant: Código Tributário Municipal](codigo-tributario/index.md)
+- [:material-city-variant: Código de Posturas Municipal](codigo-posturas/index.md)
+- [:material-account-tie: Estatuto dos Servidores](estatuto-servidores/index.md)
+- [:material-briefcase-account: Plano de Cargos e Carreiras](plano-cargos/index.md)
+- [:material-school: Plano de Cargos do Magistério](plano-cargos-magisterio/index.md)
+- [:material-sitemap-outline: Estrutura Administrativa](estrutura-administrativa/index.md)
+- [:material-shield-check-outline: Controladoria Geral](controladoria-geral/index.md)
+- [:material-map-marker-radius: Plano Diretor Municipal](plano-diretor/index.md)
+- [:material-bookshelf: Leis Complementares](leis-complementares/index.md)
+- [:material-file-document-multiple-outline: Resoluções da Educação (SECEL)](resolucoes-secel/index.md)
 
-- **Buscar:** use a caixa de busca no topo para procurar qualquer palavra em todas as leis.
-- **Citar um artigo:** os artigos têm link próprio. Por exemplo, `.../lc-003-2001/#art-5`
-  abre direto no art. 5º.
-- **Ver o que mudou:** cada lei é um arquivo no GitHub. O ícone de relógio, no canto direito
-  ao lado do título, abre a lista de todas as alterações feitas no texto daquela lei.
-- **Corrigir um erro:** o ícone de lápis abre o texto para edição no GitHub. Quem quiser pode
-  propor a correção comparando com o PDF publicado pela prefeitura.
+</div>
