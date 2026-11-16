@@ -291,11 +291,20 @@ def mesmo_numero(titulo_site: str, titulo_pdf: str) -> bool:
     return not num_pdf or (bool(num_site) and int(num_site[0]) == int(num_pdf.group(1)))
 
 
+# grupos listados das leis mais novas para as mais antigas (anos e leis dentro de cada ano, no menu e nos índices)
+MAIS_NOVAS_PRIMEIRO = {"leis-ordinarias"}
+
+
+def mais_novas_primeiro(categoria: str) -> bool:
+    return categoria.split("/")[0] in MAIS_NOVAS_PRIMEIRO
+
+
 def gerar_indice(categoria: str, nome: str, leis: list[dict]):
     linhas = ["---", f"title: {yaml_str(nome)}", "hide:", "  - toc", "---", "", f"# {nome}", "",
               "| Norma | Data | Ementa | Extração |", "|---|---|---|---|"]
-    for f in sorted(leis, key=lambda f: f["arquivo"]):
-        link = Path(f["arquivo"]).name
+    natural = lambda s: [int(x) if x.isdigit() else x for x in re.split(r"(\d+)", Path(s).name)]
+    for f in sorted(leis, key=lambda f: natural(f["arquivo"]), reverse=mais_novas_primeiro(categoria)):
+        link = os.path.relpath(DOCS / f["arquivo"], DOCS / categoria)
         titulo = f["titulo_detectado"] or f["titulo"].title()
         ementa = (f["ementa"] or "—").replace("|", "\\|")
         data = "/".join(reversed(f["data"].split("-"))) if f.get("data") else "—"
@@ -309,8 +318,9 @@ def titulo_pagina(pagina: Path) -> str:
 
 
 def subpastas(grupo: str) -> list[str]:
-    """Subpastas de um grupo (ex.: os anos de leis-ordinarias), as que têm index.md, em ordem."""
-    return sorted(p.parent.name for p in (DOCS / grupo).glob("*/index.md"))
+    """Subpastas de um grupo (ex.: os anos de leis-ordinarias), as que têm index.md, em ordem (decrescente nos
+    grupos de MAIS_NOVAS_PRIMEIRO)."""
+    return sorted((p.parent.name for p in (DOCS / grupo).glob("*/index.md")), reverse=mais_novas_primeiro(grupo))
 
 
 def gerar_indice_grupo(grupo: str, fontes: list[dict]):
@@ -352,7 +362,9 @@ def gerar_nav(fontes: list[dict]):
             linhas.append(f"  {{ {yaml_str(titulo_pagina(DOCS / grupo / 'index.md'))} = [")
             linhas.append(f'    "{grupo}/index.md",')
             for sub in subpastas(grupo):
-                leis = sorted((f for f in fontes if f["categoria"] == f"{grupo}/{sub}"), key=lambda f: f["arquivo"])
+                leis = sorted((f for f in fontes if f["categoria"] == f"{grupo}/{sub}"),
+                              key=lambda f: [int(x) if x.isdigit() else x for x in re.split(r"(\d+)", f["arquivo"])],
+                              reverse=mais_novas_primeiro(grupo))
                 linhas.append(f"    {{ {yaml_str(sub)} = [")
                 linhas.append(f'      "{grupo}/{sub}/index.md",')
                 linhas += [f'      "{f["arquivo"]}",' for f in leis]
