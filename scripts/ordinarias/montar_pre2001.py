@@ -257,6 +257,24 @@ def main():
             "ementa": ementa, "data": data, "extracao": "OCR",
         })
 
+    # Leis revistas à mão que não têm OCR próprio (vieram no PDF de outra lei, como a Lei 18/1983 no da Lei 19/1984):
+    # entram no índice e no data/fontes.json a partir da própria página
+    feitas = {x["arquivo"] for v in por_ano.values() for x in v}
+    for ano in list(por_ano):
+        for pagina in sorted((DOCS / f"leis-ordinarias/{ano}").glob("lei-*.md")):
+            arquivo = f"leis-ordinarias/{ano}/{pagina.name}"
+            cab_atual = pagina.read_text().split("\n---\n", 1)[0]
+            if arquivo in feitas or not re.search(r"^revisao: manual$", cab_atual, re.M):
+                continue
+            campo = lambda nome: (m.group(1).replace('\\"', '"') if (m := re.search(rf'^{nome}: "?(.*?)"?$', cab_atual, re.M)) else None)
+            titulo = campo("title")
+            por_ano[ano].append({
+                "origem": "pdf-ocr", "titulo": titulo, "titulo_detectado": titulo, "url": None, "pdf_local": None,
+                "fonte_doc": campo("fonte_doc"), "categoria": f"leis-ordinarias/{ano}",
+                "categoria_nome": f"Leis Ordinárias — {ano}", "pagina_origem": None, "arquivo": arquivo,
+                "ementa": campo("ementa"), "data": campo("data"), "extracao": "OCR",
+            })
+
     arq_fontes = RAIZ / "data" / "fontes.json"
     pastas_novas = {f"leis-ordinarias/{a}" for a in por_ano}
     fontes = [f for f in json.loads(arq_fontes.read_text()) if f["categoria"] not in pastas_novas]
