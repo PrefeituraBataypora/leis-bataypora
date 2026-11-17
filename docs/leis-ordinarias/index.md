@@ -53,6 +53,6 @@ As leis ordinárias do Município, separadas pelo ano de publicação. Escolha o
 | [1987](1987/index.md) | 15 |
 | [1986](1986/index.md) | 14 |
 | [1985](1985/index.md) | 25 |
-| [1984](1984/index.md) | 17 |
-| [1983](1983/index.md) | 17 |
+| [1984](1984/index.md) | 18 |
+| [1983](1983/index.md) | 18 |
 <!-- lista-fim -->

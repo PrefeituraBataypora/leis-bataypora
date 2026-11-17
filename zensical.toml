@@ -1668,6 +1668,7 @@ nav = [
       "leis-ordinarias/1984/index.md",
       "leis-ordinarias/1984/lei-36-1984.md",
       "leis-ordinarias/1984/lei-35-1984.md",
+      "leis-ordinarias/1984/lei-34-1984.md",
       "leis-ordinarias/1984/lei-33-1984.md",
       "leis-ordinarias/1984/lei-32-1984.md",
       "leis-ordinarias/1984/lei-31-1984.md",
@@ -1686,6 +1687,7 @@ nav = [
     ] },
     { "1983" = [
       "leis-ordinarias/1983/index.md",
+      "leis-ordinarias/1983/lei-18-1983.md",
       "leis-ordinarias/1983/lei-17-1983.md",
       "leis-ordinarias/1983/lei-16-1983.md",
       "leis-ordinarias/1983/lei-15-1983.md",

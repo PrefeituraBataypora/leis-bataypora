@@ -8,6 +8,7 @@ hide:
 
 | Norma | Data | Ementa | Extração |
 |---|---|---|---|
+| [Lei nº 18/1983](lei-18-1983.md) | 29/11/1983 | Estima a Receita e fixa a Despesa do Município de Bataiporã-MS., para o exercício de 1984. | OCR |
 | [Lei nº 17/1983](lei-17-1983.md) | 17/11/1983 | Dispõe sobre aumento dos vencimentos dos Servidores da Câmara Municipal de Bataiporã-MS., e dá outras providências. | OCR |
 | [Lei nº 16/1983](lei-16-1983.md) | 16/11/1983 | Dispõe sobre Declaração de Utilidade Pública a Associação Bataiporãense de Professores, e dá outras providências. | OCR |
 | [Lei nº 15/1983](lei-15-1983.md) | 16/11/1983 | Dispõe sobre o aumento e fixação de salários dos Servidores Públicos Municipais de Bataiporã-MS., e dá outras providências. | OCR |

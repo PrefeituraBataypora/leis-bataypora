@@ -5040,6 +5040,21 @@
   },
   {
     "origem": "pdf-ocr",
+    "titulo": "Lei nº 18/1983",
+    "titulo_detectado": "Lei nº 18/1983",
+    "url": null,
+    "pdf_local": null,
+    "fonte_doc": "LEI Nº019.84.pdf (cópia escaneada da prefeitura, páginas 3 a 20)",
+    "categoria": "leis-ordinarias/1983",
+    "categoria_nome": "Leis Ordinárias — 1983",
+    "pagina_origem": null,
+    "arquivo": "leis-ordinarias/1983/lei-18-1983.md",
+    "ementa": "Estima a Receita e fixa a Despesa do Município de Bataiporã-MS., para o exercício de 1984.",
+    "data": "1983-11-29",
+    "extracao": "OCR"
+  },
+  {
+    "origem": "pdf-ocr",
     "titulo": "Lei nº 19/1984",
     "titulo_detectado": "Lei nº 19/1984",
     "url": null,
@@ -5064,7 +5079,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-20-1984.md",
-    "ementa": "Dispõe sobre nova denominação da Rua Per nambuco, na cidade de Bataiporã-MS e da outras providências.",
+    "ementa": "Dispõe sobre nova denominação da Rua Pernambuco, na cidade de Bataiporã-MS e dá outras providências.",
     "data": "1984-05-10",
     "extracao": "OCR"
   },
@@ -5079,7 +5094,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-21-1984.md",
-    "ementa": "Dispõe sobre denominação do Cemitério Mu nicipal de Bataipora-MS., e da outras providências.",
+    "ementa": "Dispõe sobre denominação do Cemitério Municipal de Bataiporã-MS., e dá outras providências.",
     "data": "1984-05-10",
     "extracao": "OCR"
   },
@@ -5094,7 +5109,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-22-1984.md",
-    "ementa": "Dispõe sobre a organização de hortas es colares de caráter comunitario.",
+    "ementa": "Dispõe sobre a organização de hortas escolares de caráter comunitário.",
     "data": "1984-05-10",
     "extracao": "OCR"
   },
@@ -5109,7 +5124,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-23-1984.md",
-    "ementa": "Dispõe sobre o aumento e fixação de salá rios dos Servidores Públicos Municipais de Bataiporã-MS, e dá outras providencias.",
+    "ementa": "Dispõe sobre o aumento e fixação de salários dos Servidores Públicos Municipais de Bataiporã-MS, e dá outras providências.",
     "data": "1984-05-18",
     "extracao": "OCR"
   },
@@ -5124,7 +5139,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-24-1984.md",
-    "ementa": "Dispõe sobre aumento dos vencimentos dos Servidores da Câmara Municipal de Bataiporã-MS, e da outras providências.",
+    "ementa": "Dispõe sobre aumento dos vencimentos dos Servidores da Câmara Municipal de Bataiporã-MS, e dá outras providências.",
     "data": "1984-05-18",
     "extracao": "OCR"
   },
@@ -5139,7 +5154,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-25-1984.md",
-    "ementa": "Dispõe sobre a abertura de créditos suplementares no Orgamento do Município ¿ para o exercício financeiro de 1984 da outras providências.",
+    "ementa": "Dispõe sobre a abertura de créditos suplementares no Orçamento do Município, para o exercício financeiro de 1984 e dá outras providências.",
     "data": "1984-05-31",
     "extracao": "OCR"
   },
@@ -5169,7 +5184,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-27-1984.md",
-    "ementa": "Dispõe sobre crédito suplementar adicional no Orçamento vigente e da outras providências.",
+    "ementa": "Dispõe sobre crédito suplementar adicional no Orçamento vigente e dá outras providências.",
     "data": "1984-09-26",
     "extracao": "OCR"
   },
@@ -5199,7 +5214,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-29-1984.md",
-    "ementa": "Dispõe sobre a obrigatoriedade de ser interpretado o Hino Nacional Brasileiro em todas as escolas da rede municipal, e da outras providências.",
+    "ementa": "Dispõe sobre a obrigatoriedade de ser interpretado o Hino Nacional Brasileiro em todas as escolas da rede municipal, e dá outras providências.",
     "data": "1984-10-16",
     "extracao": "OCR"
   },
@@ -5214,7 +5229,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-30-1984.md",
-    "ementa": "Dispõe sobre a Comissão Municipal de Espor tes de Bataiporã, e dá outras providências.",
+    "ementa": "Dispõe sobre a Comissão Municipal de Esportes de Bataiporã, e dá outras providências.",
     "data": "1984-10-19",
     "extracao": "OCR"
   },
@@ -5229,7 +5244,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-31-1984.md",
-    "ementa": "Dispõe sobre aumento salarial aos Servi dores Públicos Municipais, e da outras providências.",
+    "ementa": "Dispõe sobre aumento salarial aos Servidores Públicos Municipais, e dá outras providências.",
     "data": "1984-11-16",
     "extracao": "OCR"
   },
@@ -5265,6 +5280,21 @@
   },
   {
     "origem": "pdf-ocr",
+    "titulo": "Lei nº 34/1984",
+    "titulo_detectado": "Lei nº 34/1984",
+    "url": null,
+    "pdf_local": null,
+    "fonte_doc": "LEI Nº035.84.pdf (cópia escaneada da prefeitura, páginas 2 a 29)",
+    "categoria": "leis-ordinarias/1984",
+    "categoria_nome": "Leis Ordinárias — 1984",
+    "pagina_origem": null,
+    "arquivo": "leis-ordinarias/1984/lei-34-1984.md",
+    "ementa": "Estima a Receita e fixa a Despesa do Município de Bataiporã-MS., para o exercício de 1985.",
+    "data": "1984-11-21",
+    "extracao": "OCR"
+  },
+  {
+    "origem": "pdf-ocr",
     "titulo": "Lei nº 35/1984",
     "titulo_detectado": "Lei nº 35/1984",
     "url": null,
@@ -5274,7 +5304,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-35-1984.md",
-    "ementa": "Dispõe sobre crédito suplementar adicional no orçamento vigente e dá outras pro vidências.",
+    "ementa": "Dispõe sobre crédito suplementar adicional no orçamento vigente e dá outras providências.",
     "data": "1984-11-21",
     "extracao": "OCR"
   },
@@ -5289,7 +5319,7 @@
     "categoria_nome": "Leis Ordinárias — 1984",
     "pagina_origem": null,
     "arquivo": "leis-ordinarias/1984/lei-36-1984.md",
-    "ementa": "Dispõe sobre transposição de dotação orçamentaria, e da outras providências.",
+    "ementa": "Dispõe sobre transposição de dotação orçamentária, e dá outras providências.",
     "data": "1984-12-20",
     "extracao": "OCR"
   },
