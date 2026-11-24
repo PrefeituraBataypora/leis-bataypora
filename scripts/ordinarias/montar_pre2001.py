@@ -75,11 +75,18 @@ def redigir(texto: str) -> str:
     return re.sub(r"(\[omitido\])(?:\s*\[omitido\])+", r"\1", texto)  # "CIC.-[omitido] [omitido]"
 
 
+# PDFs com o número errado no nome do arquivo: (número, ano) do nome -> (número, ano) da lei que está no PDF
+NOME_ERRADO = {
+    ("48", "1985"): ("49", "1985"),  # "LEI Nº048.85.pdf" traz a Lei nº 049/85; a Lei 48/1985 não está na pasta
+}
+
+
 def extrair_num_ano(nome: str) -> tuple[str, str]:
     m = re.match(r"LEI\s*(?:N[º°]?\s*)?(\d+)[-.\s]+(\d{2,4})", nome, re.I)
     assert m, nome
     ano = m.group(2)
-    return str(int(m.group(1))), ("19" + ano if len(ano) == 2 else ano)
+    chave = (str(int(m.group(1))), "19" + ano if len(ano) == 2 else ano)
+    return NOME_ERRADO.get(chave, chave)
 
 
 def extrair_data(linhas: list[str], ano: str) -> str | None:
