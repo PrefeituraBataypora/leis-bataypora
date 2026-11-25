@@ -24,7 +24,7 @@ def divisoes(linhas):
     """Lista de [nível, rótulo, assunto, id, artigos] na ordem da página."""
     itens, atual, ultimo_era_art = [], None, False
     for l in linhas:
-        if l.startswith("**Art."):
+        if l.startswith(("**Art.", "**Artigo ")):
             ultimo_era_art = True
             continue
         m = ANCORA_ART.match(l)
