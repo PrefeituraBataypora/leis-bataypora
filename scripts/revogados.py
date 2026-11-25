@@ -16,7 +16,7 @@ from pathlib import Path
 DOCS = Path(__file__).resolve().parents[1] / "docs"
 DEPOIS = re.compile(r'^!!! (?:danger|info) "(?:Revogado|Artigo revogado|Revogado pela [^"]*)"')
 TOPO = re.compile(r'^!!! (?:danger|info) "(?:Art\. \d+º? revogado|Parcialmente revogada[^"]*)"')
-ARTIGO = re.compile(r"^\*\*Art\. ")
+ARTIGO = re.compile(r"^\*\*Art(?:\.|igo) ")
 
 
 def nota(b: str) -> bool:

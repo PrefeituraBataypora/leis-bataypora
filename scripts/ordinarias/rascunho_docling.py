@@ -30,6 +30,9 @@ import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import tabelas  # noqa: E402
+
 PRE2001 = Path(os.environ.get("PRE2001", Path.home() / "Documents/leis-bataypora-fontes/pre2001"))
 DOCLING = os.environ.get("DOCLING", str(PRE2001.parent / ".venv-docling/bin/docling"))
 LIMIAR = 0.88  # fração mínima de palavras do parágrafo que precisam aparecer na leitura do Vision
@@ -38,11 +41,15 @@ DPI = 150
 # Nomes que aparecem nas assinaturas e no preâmbulo, na grafia correta (chave: sem acento, só letras)
 NOMES = {
     "JERCEEUSEBIODESOUZA": "JERCÉ EUSÉBIO DE SOUZA",
+    "JOAOJAMILMELLA": "JOÃO JAMIL MELLA",
     "JOSEANTONIOFRUTUOSO": "JOSÉ ANTONIO FRUTUOSO",
 }
 CARGOS = ("Prefeito Municipal", "Secretário")
 # Fecho padrão (gestão 1989–1992). Tudo depois de "Prefeitura Municipal de ..., aos ..." é trocado por ele e a região
 # inteira vai para um recorte, porque as assinaturas por cima do texto confundem as duas leituras.
+# Prefeito de cada gestão (chave de NOMES); o fecho e as assinaturas completadas usam o do ano da lei
+GESTOES = [(1983, 1988, "JOAOJAMILMELLA"), (1989, 1992, "JERCEEUSEBIODESOUZA"), (1993, 1996, "JOAOJAMILMELLA")]
+PREFEITO = "JERCEEUSEBIODESOUZA"
 FECHO = [
     "Dr. JERCÉ EUSÉBIO DE SOUZA\n{ .centro }\n\nPrefeito Municipal\n{ .centro }",
     "Registrada em livro próprio do Deptº Geral de Administração, e afixada em local de costume em data acima citada.",
@@ -52,7 +59,7 @@ FECHO = [
 CURTAS = set(
     "a o e é à ao aos as os às da das do dos de em no na nos nas num um uma por com se que ou sua seu suas seus sem até "
     "já não são lei art mês dia dias ano ser foi há mil cr ltda ms nº vr fgts clt dr sr srª bem tal só via lhe fé vez "
-    "sob três dez seis sete oito nove dois duas cem ou tão mas nem fim pôr eu dá lá pé ele ela meu".split())
+    "sob três dez seis sete oito nove dois duas cem ou ter for m d uso tem lei tão mas nem fim pôr eu dá lá pé ele ela meu".split())
 ORDINAL = "9QΩ20oº°ª"  # como o "º" sublinhado da máquina de escrever costuma sair no OCR
 
 
@@ -84,6 +91,7 @@ def dicionario() -> Counter:
 
 DIC = Counter()
 DIC_CHAVES = Counter()
+DIC_FORMA = {}  # chave → grafia mais comum no site
 
 
 # ---------------------------------------------------------------- leituras
@@ -128,6 +136,8 @@ def itens_em_ordem(doc: dict):
 def celula(c: str, corrigir=None) -> str:
     """Erros típicos das tabelas datilografadas: S6→SG, 0f→01, "20. Grau"→"2º Grau", "ba. Série"→"6ª Série"."""
     c = re.sub(r"\bS6\b", "SG", c)
+    c = re.sub(r"(?<=\d)\.\.(?=\d)", ".", c)                       # "2..400.000" → "2.400.000"
+    c = re.sub(r"(?<![\d.,])\d{5,}(?![\d.,])", lambda m: f"{int(m.group(0)):,}".replace(",", "."), c)  # 2172569600 → 2.172.569.600
     c = re.sub(r"\b0[fFlI]\b", "01", c)
     c = re.sub(r"\b(?:[iI1l]o?|1[0oº])\.?\s*(?=Grau)", "1º ", c)
     c = re.sub(r"\b2[0oº]\.?\s*(?=Grau)", "2º ", c)
@@ -190,18 +200,26 @@ def limpar(s: str) -> str:
     s = s.replace("Ω", "º").translate(str.maketrans("äöòèìùÄÖÎ", "ãõóéíúÃÕI"))
     s = re.sub(r"(?<=[aeiouáéíóúâêô])c(?=ão|ões|ã\b)", "ç", s)           # construcão → construção
     s = re.sub(r"(?<=[AEIOUÁÉÍÓÚÂÊÔ])C(?=ÃO|ÕES)", "Ç", s)
-    s = re.sub(r"(?<![A-Za-zÀ-ÿ])(?=[\diIO.,]*\d)[\diIO][\diIO.,]*(?![A-Za-zÀ-ÿ])|(?<![A-Za-zÀ-ÿ])[iI](?=º)",
+    s = re.sub(r"(?<![A-Za-zÀ-ÿ])(?=[\diIO.,]*\d)[\diIO][\diIO.,]*(?![A-Za-ln-zÀ-ÿ])|(?<![A-Za-zÀ-ÿ])[iI](?=º)",
                lambda m: m.group(0).replace("i", "1").replace("I", "1").replace("O", "0"), s)      # i992, ii.440, iº → 1992, 11.440, 1º
     s = re.sub(r"\b([nN])[9QΩ°o]\s*[-–.]\s*(?=\d)", lambda m: m.group(1) + "º-", s)
     s = re.sub(r"\b([nN])[0O]\s*[-–]\s*(?=\d)", lambda m: m.group(1) + "º-", s)        # n0-176   # n9-176 → nº-176
     s = re.sub(r"(?<=\d)[O](?=\d|\b)", "0", s)                           # 4O → 40
     s = re.sub(r"\b[O0][iI]\b", "01", s)                                   # "De Oi de julho"
+    s = re.sub(r"\b[iIl][O0o](?=\s*\()", "10", s)                            # "iO(dez)"
+    s = re.sub(r"(?<![\w.])[iIl](?= a \d)", "1", s)                           # "de i a 15"
+    s = re.sub(r"\bDs(?= [a-zà-ú])", "Os", s)                                  # "Ds casos"
+    s = re.sub(r"\b([Aa])presente (Lei|lei)\b", r"\1 presente \2", s)          # "apresente Lei"
+    s = re.sub(r"(?<=\b[a-zà-ú]{2})\.(?=[a-zà-ú]{3,}\b)", " ", s)              # "na.data"
     s = re.sub(r"(?<![\d.,])\b0(?= [A-Za-zÀ-ú])|\b0(?=s\b)", "O", s)                              # "0 terreno" → "O terreno"
     s = re.sub(r"\bN[O0Q9o]\s*[-–]?\s*(?=\d)", "Nº-", s)                # NO-40, N9-188
     s = re.sub(r"(?<=\d)m2\b|\bm2\b", "m²", s)
     s = re.sub(r"(?<![\w.])i(?=\s*%)", "1", s)                              # i% → 1%
     s = re.sub(r"\s+([,.;:])", r"\1", s)
+    s = re.sub(r"(?<=\d)\s?[xX%]\s?\((?=[a-zà-ú])", "% (", s)                   # "25x(vinte" → "25% (vinte"
     s = re.sub(r"(?<=[\d%²])\(", " (", s)                                # 50%(cinquenta → 50% (cinquenta
+    s = re.sub(r"\bÀs despesas\b", "As despesas", s)
+    s = re.sub(r"^Prefeitura\.\s+Municipal", "Prefeitura Municipal", s)
     s = re.sub(r"\b([Rr]evogam-se|revogadas|de acordo com) às\b", r"\1 as", s)
     s = re.sub(r"^Às despesas", "As despesas", s)
     s = re.sub(r"Batayporã\s*-?\s*[mM][sS]\b", "Batayporã-MS", s)
@@ -250,31 +268,39 @@ class Palavras:
             a, b = k[:c], k[c:]
             if self.chaves[a] and self.chaves[b] and (len(b) > 1 or b in ("e", "a", "o")):
                 return w[:c] + " " + w[c:]
-        perto = difflib.get_close_matches(k, [x for x in self.chaves if abs(len(x) - len(k)) <= 2], n=1, cutoff=0.8)
+        cands = {x for x in self.chaves if abs(len(x) - len(k)) <= 2}
+        cands |= {x for x, c in DIC_CHAVES.items() if c >= 5 and abs(len(x) - len(k)) <= 2}
+        perto = difflib.get_close_matches(k, cands, n=1, cutoff=0.8)
         if perto and (perto[0] + "s" == k or k + "s" == perto[0] or perto[0].rstrip("s") == k.rstrip("s")):
             perto = None  # singular/plural: a palavra do Docling provavelmente está certa
         if perto and (k.startswith(perto[0]) or perto[0].startswith(k) or self.chaves[perto[0]] < 2 and len(perto[0]) < len(k)):
             perto = None  # o Vision tem só o pedaço da palavra cortada no fim da linha
         if perto:  # "acAma" → "acima"
-            certo = self.por_chave[perto[0]]
+            certo = self.por_chave.get(perto[0]) or DIC_FORMA.get(perto[0], perto[0])
             self.mudancas.append(f"{w}→{certo}")
             return certo.upper() if w.isupper() else (certo[0].upper() + certo[1:] if w[0].isupper() else certo.lower())
         return w
 
     def colar(self, s: str) -> str:
-        """Junta palavras partidas pela hifenização da linha ("aten dimento", "reda- ção", "per mitida")."""
-        def junta(m):
-            a, b = m.group(1), m.group(2)
+        """Junta palavras partidas pela hifenização da linha ("aten dimento", "reda- ção", "traba lho")."""
+        def junta(a, b):
             if self.chaves[chave(a + b)] and not (self.chaves[chave(a)] and self.chaves[chave(b)] and len(a) > 3 and len(b) > 3):
-                return a + b
+                return True
             ka, kb, kab = chave(a), chave(b), chave(a + b)
-            if DIC_CHAVES[kab] >= 2 and (DIC_CHAVES[ka] < 2 or DIC_CHAVES[kb] < 2) and kb not in CURTAS_CHAVES:
-                return a + b  # "even tos" → "eventos": a palavra inteira existe no vocabulário do site
-            if (not self.chaves[chave(a)] and not self.chaves[chave(b)] and len(b) <= 6 and len(a) >= 2
-                    and chave(b) not in CURTAS_CHAVES):
-                return a + b  # duas metades desconhecidas: palavra partida na quebra de linha ("even tos")
-            return m.group(0)
-        return re.sub(r"([A-Za-zÀ-ÿ]+)-? ([a-zà-ÿ]+)", junta, s)
+            if DIC_CHAVES[kab] >= 2 and (DIC_CHAVES[ka] < 2 or DIC_CHAVES[kb] < 2) and \
+                    (kb not in CURTAS_CHAVES or DIC_CHAVES[ka] < 2):
+                return True  # a palavra inteira existe no vocabulário do site
+            return (not self.chaves[ka] and not self.chaves[kb] and len(b) <= 6 and len(a) >= 2
+                    and kb not in CURTAS_CHAVES and not DIC_CHAVES[ka] and not DIC_CHAVES[kb])
+        partes = re.split(r"([A-Za-zÀ-ÿ]+)", s)  # [sep, palavra, sep, palavra, ...]
+        i = 1
+        while i + 2 < len(partes):
+            sep, a, b = partes[i + 1], partes[i], partes[i + 2]
+            if sep in (" ", "- ") and b[:1].islower() and junta(a, b):
+                partes[i:i + 3] = [a + b]
+                continue
+            i += 2
+        return "".join(partes)
 
     def __call__(self, s: str) -> str:
         return re.sub(r"[A-Za-zÀ-ÿ]+", lambda m: self.palavra(m.group(0)), self.colar(s))
@@ -313,6 +339,92 @@ def nomes_no_texto(t: str) -> str:
 FIM_FRASE = re.compile(r"[.:;!?\"”]\s*$")
 
 
+def bloco_tabela(t: dict, doc: dict, saida: Path, corrigir, notas: list):
+    """Grava a tabela em t-NN.csv, confere os números e devolve os blocos: o da tabela (com o marcador do CSV) e, se
+    alguma linha falhar, um bloco de conferência só com as linhas que falharam."""
+    nome = f"t-{len(list(saida.glob('t-*.csv'))) + 1:02d}"
+    grade = t["data"].get("grid") or []
+    linhas = tabelas.normalizar([[celula(c.get("text", "").strip(), corrigir) for c in l] for l in grade])
+    tabelas.gravar_csv(saida / f"{nome}.csv", linhas)
+    texto = f"<!-- tabela {nome} -->\n{tabelas.markdown(linhas)}"
+    falhas = tabelas.validar(linhas)
+    provs = list(t.get("prov", []))
+    if falhas is None:
+        return [(texto, provs, f"tabela {nome} sem conferência automática")]
+    if not falhas:
+        notas.append(f"{nome}.csv: números conferidos pelas somas/progressões ({len(linhas)} linhas), sem recorte")
+        return [(texto, provs, None)]
+    # recorta só as linhas que falharam (caixa das células da linha; o Docling dá em TOPLEFT)
+    pag = provs[0]["page_no"] if provs else 1
+    H = doc["pages"][str(pag)]["size"]["height"]
+    blocos = [(texto, provs, None)]
+    lin_docling = [l for l in grade]
+    for i, motivo in falhas:
+        # a normalização pode ter juntado linhas: acha a linha do Docling pelo primeiro número da linha
+        num = next((c for c in linhas[i] if tabelas.valor(c) is not None), None)
+        orig = next((g for g in lin_docling if num and any(num in c.get("text", "") for c in g)), None)
+        cel = [c for c in (orig or (lin_docling[i] if i < len(lin_docling) else [])) if c.get("bbox")]
+        if not cel:
+            continue
+        bb = {"l": min(c["bbox"]["l"] for c in cel), "r": max(c["bbox"]["r"] for c in cel),
+              "t": H - min(c["bbox"]["t"] for c in cel), "b": H - max(c["bbox"]["b"] for c in cel)}
+        blocos.append((f"@@CONF {nome} linha {i + 1}: " + " | ".join(linhas[i]) + "@@", [{"page_no": pag, "bbox": bb}],
+                       f"{nome}.csv linha {i + 1}: {motivo}"))
+    return blocos
+
+
+EXTENSO = {"primeiro": 1, "um": 1, "dois": 2, "tres": 3, "quatro": 4, "cinco": 5, "seis": 6, "sete": 7, "oito": 8,
+           "nove": 9, "dez": 10, "onze": 11, "doze": 12, "treze": 13, "catorze": 14, "quatorze": 14, "quinze": 15,
+           "dezesseis": 16, "dezessete": 17, "dezoito": 18, "dezenove": 19, "vinte": 20, "trinta": 30}
+MESES = "janeiro fevereiro marco abril maio junho julho agosto setembro outubro novembro dezembro".split()
+
+
+def data_fecho(t: str):
+    """'..., aos vinte e sete dias do mês de agosto de 1992' → (27, 8, 1992); None se não der para ler."""
+    m = re.search(r"\ba[oq]s?\s+(.+?)\s+dias?\s+do\s+m[eê]s\s+de\s+([a-zç]+)\s+(?:do\s+ano\s+)?de\s+(\d)\.?(\d{3})",
+                  sem_acento(t).replace("ê", "e"), re.I)
+    if not m:
+        return None
+    dia = 0
+    for w in re.findall(r"[a-z]+", m.group(1).lower()):
+        if w == "e":
+            continue
+        if w not in EXTENSO:
+            return None
+        dia += EXTENSO[w]
+    mes = chave(m.group(2))
+    return (dia, MESES.index(mes) + 1, int(m.group(3) + m.group(4))) if mes in MESES else None
+
+
+def data_cabecalho(t: str):
+    m = re.search(r"(\d{1,2})\s+de\s+([a-zçÇ]+)\s+de\s+(\d)\.?(\d{3})", t or "", re.I)
+    if not m or chave(m.group(2)) not in MESES:
+        return None
+    return (int(m.group(1)), MESES.index(chave(m.group(2))) + 1, int(m.group(3) + m.group(4)))
+
+
+def registro_padrao(textos: list[str]) -> bool:
+    """Alguma leitura do registro bate com o modelo (ignora pontuação, "Deptº"/"Depto" e o gênero de registrado/afixado)?"""
+    norm = lambda x: chave(x).replace("depto", "dept").replace("registrado", "registrada").replace("afixado", "afixada")
+    modelo = norm(FECHO[1])
+    for t in textos:
+        m = re.search(r"Regist.{20,260}?\w+ta\w*", t, re.S | re.I)
+        if m and difflib.SequenceMatcher(None, norm(m.group(0)), modelo).ratio() >= 0.85:
+            return True
+    return False
+
+
+def variante_registro(textos: list[str]) -> str:
+    """O modelo do registro com as variações que aparecem nas leituras (Registrado/afixado, Departamento)."""
+    reg = FECHO[1]
+    junto = " ".join(re.findall(r"Regist.{20,260}?\w+ta\w*", " ".join(textos), re.S | re.I))
+    if re.search(r"Registrado", junto) and re.search(r"afixado", junto):
+        reg = reg.replace("Registrada", "Registrado").replace("afixada", "afixado")
+    if re.search(r"Departamento Geral", junto):
+        reg = reg.replace("Deptº Geral", "Departamento Geral")
+    return reg
+
+
 def juntar(itens):
     """Junta itens de texto que o Docling partiu no meio da frase ("...Sistema" + "Mnanceiro da Habitação.")."""
     saida = []
@@ -349,22 +461,29 @@ def main():
     for velho in saida.glob("r-*.png"):
         velho.unlink()
 
+    global PREFEITO
+    PREFEITO = next((k for a, b, k in GESTOES if a <= int(ano) <= b), PREFEITO)
+    FECHO[0] = f"Dr. {NOMES[PREFEITO]}\n{{ .centro }}\n\nPrefeito Municipal\n{{ .centro }}"
     DIC.update(dicionario())
     DIC_CHAVES.update({k: 0 for k in ()})
-    for w, c in DIC.items():
+    for w, c in DIC.most_common():
         DIC_CHAVES[chave(w)] += c
+        DIC_FORMA.setdefault(chave(w), w.lower())
     doc = ler_docling(pdf, nome)
     acentos, palavras = Acentos(vision), Palavras(vision)
     itens = [(tp, it) for tp, it in itens_em_ordem(doc)
              if tp == "tables" or (it.get("text", "").strip() and it.get("label") not in ("page_header", "page_footer", "picture"))]
 
+    notas = []
+    for velho in saida.glob("t-*.csv"):
+        velho.unlink()
     blocos = []  # (texto markdown, provs, motivo para conferir ou None)
     esperado_art, esperado_par = 1, 1
     viu_lei = viu_ementa = False
     for b in juntar(itens):
         provs = b["prov"]
         if b["tipo"] == "tables":
-            blocos.append((texto_tabela(b["item"], lambda c: limpar(palavras(acentos(c)))), provs, "tabela"))
+            blocos.extend(bloco_tabela(b["item"], doc, saida, lambda c: limpar(palavras(acentos(c))), notas))
             continue
         bruto = b["texto"]
         d = re.search(r"De \d{1,2} de [a-zç]+ de \d\.?\d{3}", bruto) if not viu_ementa else None
@@ -401,18 +520,27 @@ def main():
         mp = PAR.match(t) if not ma else None
         if ma:
             num, ok = numero_rotulo(ma.group(2), esperado_art)
+            lixo = re.match(r"^([\dîiIlDO]{1,3})[º°]?\s*[-–]", t[ma.end():])
+            if not ok and not ma.group(2).strip(ORDINAL) and lixo and \
+                    lixo.group(1).translate(str.maketrans("îiIlDO", "111100")).startswith(str(esperado_art)[0]):
+                num, ok = esperado_art, True  # "Art. 2D-": o número ficou no lixo depois do rótulo
             rot = "Artigo" if ma.group(1) == "Artigo" else "Art."
             if not ok:
                 motivo = f"número do artigo (esperado {esperado_art}, lido {ma.group(2)})"
             esperado_art, esperado_par = num + 1, 1
-            t = f"**{rot} {num}{'º' if num < 10 else ''}** - {t[ma.end():]}\n{{ #art-{num} }}"
+            resto = re.sub(r"^(?:[\dîiIlDO]{1,3}[º°]?\s*[-–]\s*|[îÎ]{1,2}\s+)", "", t[ma.end():])  # "2D- ", "îî "
+            t = f"**{rot} {num}{'º' if num < 10 else ''}** - {resto}\n{{ #art-{num} }}"
         elif mp:
             num, ok = numero_rotulo(mp.group(1), esperado_par)
             if not ok:
                 motivo = f"número do parágrafo (esperado §{esperado_par}, lido {mp.group(1)})"
             esperado_par = num + 1
             t = f"§{num}º - {t[mp.end():]}"
-        t = re.sub(r"^Par[aá]grafo [uú]nico\s*[-–]?\s*", "Parágrafo único - ", t)
+        t = re.sub(r"^Par[aá]grafo [uú]nico\s*[-–]?\s*", "Parágrafo único - ", t, flags=re.I)
+        if (ma or mp or t.startswith("Parágrafo único")) and re.search(r"[\wº)]$", t.split("\n")[0]):
+            linhas_t = t.split("\n")
+            linhas_t[0] += "."  # artigo ou parágrafo sem ponto final
+            t = "\n".join(linhas_t)
         assin = assinatura(t)
         if assin:
             t = assin
@@ -430,7 +558,7 @@ def main():
                     if w.lower() not in CURTAS and not re.fullmatch(r"[IVXLC]+|[A-Z]{2,4}", w)]
         if not motivo and not assin and (any(len(w) >= 2 for w in sem_par) or len(sem_par) >= 2):
             motivo = "palavras sem par na leitura do Vision: " + ", ".join(sem_par[:6])
-        if not motivo and re.search(r"\b(?:artigo|art\.)\s+\d[09]\b", t, re.I):
+        if not motivo and re.search(r"\b(?:artigo|art\.)\s+\d[09]\b", re.sub(r"^\*\*[^*]+\*\*", "", t), re.I):
             motivo = "artigo citado terminado em 0: pode ser o \"º\" lido como 0 (artigo 40 ou 49 = 4º?)"
         if not motivo and re.search(r"\b\d?9 de (janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|"
                                     r"novembro|dezembro)", t) and not t.startswith(("Prefeitura", "**LEI")):
@@ -439,18 +567,17 @@ def main():
             motivo = "caractere estranho"
         blocos.append((t, provs, motivo))
 
-    notas = []
     textos = [b[0] for b in blocos]
     if not any("Prefeito Municipal\n{ .centro }" in x for x in textos) and re.search(r"Prefeito\s+M", vision.split("aos")[-1]):
         i = next((k for k, x in enumerate(textos) if x.startswith("Registrada")), len(blocos))
-        dr = "Dr. " if re.search(r"Dr\.?\s*JERC", vision) else ""
+        dr = "Dr. " if re.search(r"Dr\.?\s*" + NOMES[PREFEITO][:4], vision) else ""
         antes = next((b for b in reversed(blocos[:i]) if b[0].startswith("Prefeitura") and b[1]), None)
         depois = blocos[i] if i < len(blocos) and blocos[i][1] else None
         prov = []
         if antes and depois and antes[1][-1]["page_no"] == depois[1][0]["page_no"]:
             a, d = antes[1][-1], depois[1][0]
             prov = [{"page_no": a["page_no"], "bbox": {"l": 150, "r": 530, "t": a["bbox"]["b"], "b": d["bbox"]["t"]}}]
-        blocos.insert(i, (f"{dr}{NOMES['JERCEEUSEBIODESOUZA']}\n{{ .centro }}\n\nPrefeito Municipal\n{{ .centro }}", prov,
+        blocos.insert(i, (f"{dr}{NOMES[PREFEITO]}\n{{ .centro }}\n\nPrefeito Municipal\n{{ .centro }}", prov,
                           "assinatura do Prefeito completada pelo nome conhecido" if prov else None))
         notas.append("assinatura do Prefeito completada pelo nome conhecido (o Docling não a leu)")
     if not any("Secretário\n{ .centro }" in x for x in textos) and re.search(r"Sec\w*t[aá]rio|FRUTUOSO", vision):
@@ -462,8 +589,21 @@ def main():
     def ordinal(m):
         num = int(m.group(2) + m.group(3))
         return f"{m.group(1)} {m.group(2)}º" if num > total else m.group(0)
-    blocos = [(re.sub(r"\b([Aa]rt(?:igo|\.)?)\s+([1-9])([09])\b(?![^.;]{0,25}\b(?:Lei|Decreto|Constitui|ADCT|Ato)\b)",
-                      ordinal, t) if not t.startswith("**") else t, pv, mt) for t, pv, mt in blocos]
+    REF = r"\b([Aa]rt(?:igo|\.)?)\s+([1-9])([09])\b(?![^.;]{0,25}\b(?:Lei|Decreto|Constitui|ADCT|Ato)\b)"
+    novos = []
+    for t, pv, mt in blocos:
+        rot = re.match(r"^\*\*[^*]+\*\*", t)  # o rótulo do próprio artigo não entra
+        corpo_t = t[rot.end():] if rot else t
+        novo = (t[:rot.end()] if rot else "") + re.sub(REF, ordinal, corpo_t)
+        if novo != t and mt and mt.startswith("artigo citado terminado"):
+            ainda = re.search(r"\b(?:artigo|art\.)\s+\d[09]\b", re.sub(r"^\*\*[^*]+\*\*", "", novo), re.I)
+            if not ainda:
+                notas.append("citação corrigida pela numeração da lei: " + "; ".join(
+                    f"{a}→{b}" for a, b in zip(re.findall(r"(?:artigo|art\.)\s+\d[09]\b", corpo_t, re.I),
+                                               re.findall(r"(?:artigo|art\.)\s+\dº", novo[len(t) - len(corpo_t):], re.I))))
+                mt = None
+        novos.append((novo, pv, mt))
+    blocos = novos
 
     # fecho: troca o que vem depois de "Prefeitura Municipal de ..., aos" pelo modelo e recorta a região toda
     k = next((k for k in range(len(blocos) - 1, -1, -1) if re.match(r"^Prefeitura Municipal de .*\b(aos?|ag|aq)\b", blocos[k][0], re.I)), None)
@@ -480,8 +620,22 @@ def main():
             fim += 1
         provs = [p for b in blocos[k:fim] for p in b[1]]
         fecho = [(x, [], None) for x in FECHO]
-        if provs:
-            fecho[0] = (FECHO[0], provs, "fecho padrão: conferir data, assinaturas e registro")
+        fecho[1] = (variante_registro([b[0] for b in blocos[k:fim]] + [vision]), [], None)
+        # sem recorte quando o texto já confirma: data do fecho = data do cabeçalho e registro no modelo
+        cab = next((b[0] for b in blocos if b[0].startswith("@@DATA")), None)
+        df, dc = data_fecho(blocos[k][0]), data_cabecalho(cab)
+        regs = [b[0] for b in blocos[k + 1:fim]] + [vision]
+        if df and dc and df == dc and registro_padrao(regs):
+            m_data = re.search(r"^.*?\b\d\.?\d{3}\.?", blocos[k][0])
+            blocos[k] = (m_data.group(0).rstrip(".") + "." if m_data else blocos[k][0], blocos[k][1], None)
+            notas.append(f"fecho conferido pelo texto: data {df[0]:02d}/{df[1]:02d}/{df[2]} igual à do cabeçalho; registro no modelo")
+        elif provs:
+            por = []
+            if not (df and dc and df == dc):
+                por.append(f"data do fecho {df} ≠ cabeçalho {dc}" if df and dc else "data do fecho ilegível")
+            if not registro_padrao(regs):
+                por.append("registro fora do modelo")
+            fecho[0] = (FECHO[0], provs, "fecho padrão: " + "; ".join(por))
         blocos = blocos[:k + 1] + fecho + blocos[fim:]
         notas[:] = [x for x in notas if "assinatura" not in x]
 
@@ -516,7 +670,17 @@ def main():
                 regioes.append(reg)
 
     px = 0
-    linhas = [f"# Conferir — {nome}", "", f"{len(regioes)} recorte(s). Rascunho: rascunho.md", ""]
+    # resumo: o que precisa ser lido para revisar, sem abrir o rascunho inteiro
+    ementa = next((c for c in corpo[1:] if not c.startswith(("**", "<!--")) and not re.match(r"^[A-ZÀ-Ý. ]{8,},", c)), "")
+    arts = [m.group(1) for c in corpo for m in [re.search(r"\{ #art-(\d+) \}", c)] if m]
+    duvidosos = {id(tx) for tx, _, mt in blocos if mt}
+    confirmados = sum(1 for tx, _, mt in blocos if not mt and not tx.startswith("@@"))
+    linhas = [f"# Conferir — {nome}", "",
+              f"Cabeçalho: {corpo[0].splitlines()[0]}",
+              f"Ementa: {ementa}",
+              f"Artigos: {len(arts)} ({', '.join(arts[:3])}{'…' if len(arts) > 3 else ''}); "
+              f"blocos confirmados pelas duas leituras: {confirmados}; a conferir: {len(duvidosos)}",
+              f"{len(regioes)} recorte(s), ~{sum(1 for _ in regioes) and 0}{'' if regioes else ''}".rstrip(", ~0"), ""]
     linhas += [f"- {x}" for x in notas] + ([""] if notas else [])
     for i, r in enumerate(regioes, 1):
         arq = saida / f"r-{i:02d}.png"
