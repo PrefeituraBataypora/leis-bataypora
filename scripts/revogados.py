@@ -62,6 +62,9 @@ def marcar_qualquer(b: str) -> str:
         return b if 'class="revogado"' in b else re.sub(r"<table(?![^>]*class=)", '<table class="revogado"', b)
     if b.lstrip().startswith("|"):  # tabela Markdown não aceita atributo: vai dentro de um <div class="revogado">
         return f'{ABRE}\n\n{b}\n\n</div>'
+    if b.startswith(">"):  # citação (texto novo de artigo alterado): o atributo vai em cada parágrafo da citação
+        partes = [re.sub(r"\n(?:> )?\{ \.revogado \.tudo \}$", "", p) for p in b.split("\n>\n")]
+        return "\n>\n".join(p + "\n> { .revogado .tudo }" for p in partes)
     return marcar(b)
 
 
