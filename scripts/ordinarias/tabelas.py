@@ -184,3 +184,27 @@ def markdown(linhas: list[list[str]]) -> str:
     sep = "|" + "".join("---:|" if j in num else "---|" for j in range(n))
     corpo = ["| " + " | ".join(c.replace("|", "/") for c in l) + " |" for l in linhas[h:]]
     return "\n".join(["| " + " | ".join(cab) + " |", sep] + corpo)
+
+
+def suspeitas(texto: str) -> list[str]:
+    """Sinais de planilha mal transcrita numa página pronta (Markdown): texto com cara de tabela fora de tabela,
+    cabeçalho de colunas grudado num parágrafo e tabela cujo cabeçalho é uma linha de dados (continuação de página)."""
+    avisos = []
+    for b in texto.split("\n\n"):
+        b = b.strip("\n")
+        if not b or b.startswith(("#", "!!!", "    ", ">", "---")):
+            continue
+        if b.startswith("|"):
+            cab = [c.strip() for c in b.split("\n")[0].strip("|").split("|")]
+            if any(valor(c) is not None or re.fullmatch(r"\d[.\d]*", c) for c in cab if c):
+                avisos.append(f"tabela começa com linha de dados (continuação sem cabeçalho?): {b.splitlines()[0][:90]}")
+            continue
+        for l in b.split("\n"):
+            nums, palavras = len(NUM.findall(l)), len(re.findall(r"[A-Za-zÀ-ú]{3,}", l))
+            if nums >= 2 and len(l) > 80 and not l.startswith("**") and palavras < 6 * nums:
+                avisos.append(f"números de tabela fora de tabela: {l[:90]}")
+            elif re.search(r"\b(Codigo|CÓDIGO|C\.B\.O\.?)\s+\S+\s+\S+", l) and re.search(r"Especifica|EMPREGO|QTD|Desdobramento", l):
+                avisos.append(f"cabeçalho de colunas fora de tabela: {l[:90]}")
+            elif len(l) > 160 and l.isupper():
+                avisos.append(f"várias linhas de título grudadas: {l[:90]}")
+    return avisos

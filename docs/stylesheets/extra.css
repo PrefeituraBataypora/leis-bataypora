@@ -93,3 +93,21 @@
   display: inline;
   text-decoration: inherit;
 }
+
+/* Quadro com bordas acima das planilhas do sistema orçamentário (ORGAO, UNIDADE, FUNCAO, PROGRAMA, PROJETO/ATIVIDADE),
+   gerado por scripts/ordinarias/orcamento_impresso.py */
+.md-typeset table.orc-cabecalho, .md-typeset table.orc-topo {
+  display: table;
+  border-collapse: collapse;
+  font-size: .64rem;
+  margin-bottom: .4em;
+}
+.md-typeset table.orc-cabecalho td, .md-typeset table.orc-topo td {
+  border: .05rem solid var(--md-typeset-table-color);
+  padding: .3em .8em;
+  vertical-align: top;
+}
+.md-typeset table.orc-cabecalho td:first-child {
+  white-space: nowrap;
+  font-weight: 700;
+}
