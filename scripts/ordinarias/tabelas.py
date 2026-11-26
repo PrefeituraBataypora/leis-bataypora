@@ -177,6 +177,8 @@ def markdown(linhas: list[list[str]], cab: int | None = None) -> str:
     n = max(len(l) for l in linhas)
     linhas = [l + [""] * (n - len(l)) for l in linhas]
     h = cab or max(1, cabecalho(linhas))
+    if h >= len(linhas):  # tabela só de texto: a primeira linha é o cabeçalho
+        h = 1
     cab = []
     for j in range(n):  # cabeçalho de várias linhas (célula mesclada repetida pelo Docling): junta sem repetir
         partes = list(dict.fromkeys(linhas[k][j].strip() for k in range(h) if linhas[k][j].strip()))
