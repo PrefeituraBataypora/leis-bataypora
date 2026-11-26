@@ -107,8 +107,8 @@ def cabecalhos_em_quadro(texto: str) -> str:
 # --- linhas do topo de cada página do sistema orçamentário num quadro com bordas ---
 #   | ORC072 - SISTEMA ORCAMENTARIO         | QUADRO DE DETALHAMENTO DE DESPESAS |         |
 #   | PREFEITURA MUNICIPAL DE BATAYPORA - M | EXERCICIO DE 1995                  | PAG.: 1 |
-SIS = re.compile(r"^(ORC\d{3}\s*-\s*SISTEMA ORCAMENTARIO)\s*(.*?)\s*(\([^)]*\))?$")
-PREF = re.compile(r"^(PREFEITURA MUNICIPAL DE BATAYPORA(?:\s*-\s*M)?)\s*(.*?)\s*((?:EMISSAO\s*:\s*\S+\s*)?PAG\.:\s*\d+)?$")
+SIS = re.compile(r"^(ORC\d{3}\s*-\s*SISTEMA ORCAMENTARIO)\s*(.*?)\s*(\([^)]*\)|PAG\.:\s*\d+)?$")
+PREF = re.compile(r"^(PREFEITURA MUNICIPAL DE BATAYPORA(?:\s*-\s*MS?\b)?)\s*(.*?)\s*((?:EMISSAO\s*:\s*\S+\s*)?PAG\.:\s*\d+)?$")
 
 
 def topo_em_quadro(texto: str) -> str:

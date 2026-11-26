@@ -20,7 +20,7 @@ NUM = re.compile(r"(?<![\d.,])\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?(?![\d])|(?<![\d.,
 
 def valor(c: str):
     """'1.168.175.844' → 1168175844; '41.036,40' → 41036.40; texto → None."""
-    c = c.replace("CR$", "").replace("Cr$", "").strip(" -.")
+    c = c.replace("CR$", "").replace("Cr$", "").replace("R$", "").strip(" -.")
     m = NUM.fullmatch(c) or re.fullmatch(r"\d+", c)
     if not m:
         return None
@@ -170,12 +170,13 @@ def validar(linhas: list[list[str]]):
     return sorted((i, "; ".join(dict.fromkeys(m))) for i, m in falhas.items())
 
 
-def markdown(linhas: list[list[str]]) -> str:
+def markdown(linhas: list[list[str]], cab: int | None = None) -> str:
+    """cab: linhas de cabeçalho (padrão: as do topo sem números; tabela refeita pela revisão tem cab=1)."""
     if not linhas:
         return ""
     n = max(len(l) for l in linhas)
     linhas = [l + [""] * (n - len(l)) for l in linhas]
-    h = max(1, cabecalho(linhas))
+    h = cab or max(1, cabecalho(linhas))
     cab = []
     for j in range(n):  # cabeçalho de várias linhas (célula mesclada repetida pelo Docling): junta sem repetir
         partes = list(dict.fromkeys(linhas[k][j].strip() for k in range(h) if linhas[k][j].strip()))

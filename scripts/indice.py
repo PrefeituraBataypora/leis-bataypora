@@ -41,11 +41,17 @@ def divisoes(linhas):
         ident = re.search(r"#([\w-]+)", attrs)
         rotulo, _, assunto = texto.partition(" — ")
         r = ROTULO.match(rotulo)
-        nivel = NIVEL[r.group(1).upper().replace("TITULO", "TÍTULO")] if r else None
+        romano = re.fullmatch(r"[IVXL]+", rotulo.strip())  # divisão só numerada ("## IV — DOS RECURSOS"): como capítulo
+        nivel = NIVEL[r.group(1).upper().replace("TITULO", "TÍTULO")] if r else ("romano" if romano else None)
         if len(m.group(1)) == 1 and nivel is None:
             continue  # título da página
         atual = [nivel, rotulo.strip(), assunto.strip(), ident.group(1) if ident else None, []]
         itens.append(atual)
+    # divisões só numeradas contam como capítulos apenas em leis sem Título/Capítulo/Seção com nome
+    nomeadas = any(isinstance(i[0], int) for i in itens)
+    for i in itens:
+        if i[0] == "romano":
+            i[0] = None if nomeadas else 1
     return itens
 
 
@@ -77,7 +83,7 @@ def tabela(itens):
             linhas.append(f"| **{rot}** | {negrito} | {faixa(arts)} |" if rotulo else f"|  | {assunto} | {faixa(arts)} |")
             continue
         recuo = "&emsp;" * (nivel - base)
-        nome = rotulo[:1].upper() + rotulo[1:].lower() if nivel else rotulo.upper()
+        nome = rotulo if re.fullmatch(r"[IVXL]+", rotulo) else rotulo[:1].upper() + rotulo[1:].lower() if nivel else rotulo.upper()
         if nome in ("Capítulo", "Seção", "Subseção"):
             nome += " (sem número)"
         nome = re.sub(r"\b([ivxl]+|única|unica)$", lambda m: m.group(1).upper(), nome)

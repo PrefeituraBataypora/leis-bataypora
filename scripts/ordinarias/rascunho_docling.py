@@ -453,6 +453,8 @@ def main():
     n, ano = sys.argv[1], sys.argv[2]
     aa = ano[2:]
     base = f"LEI Nº{int(n):03d}.{aa}"
+    if not (PRE2001 / "orig_raw" / f"{base}.pdf").exists() and (PRE2001 / "orig_raw" / f"{base} ANEXO.pdf").exists():
+        base += " ANEXO"  # algumas leis só têm a cópia com o anexo ("LEI Nº327.95 ANEXO.pdf")
     pdf = PRE2001 / "orig_raw" / f"{base}.pdf"
     vision = desfazer_hifen((PRE2001 / "ocr_txt" / f"{base}.txt").read_text())
     nome = f"lei-{n}-{ano}"
