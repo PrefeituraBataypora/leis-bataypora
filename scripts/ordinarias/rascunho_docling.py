@@ -452,8 +452,8 @@ def juntar(itens):
 def main():
     n, ano = sys.argv[1], sys.argv[2]
     aa = ano[2:]
-    # nomes das cópias: "LEI Nº327.95.pdf", "LEI Nº340-96.pdf" e, quando só há a cópia com o anexo, "… ANEXO.pdf"
-    candidatos = [f"LEI Nº{int(n):03d}{sep}{aa}{fim}" for fim in ("", " ANEXO") for sep in (".", "-")]
+    # nomes das cópias: "LEI Nº327.95.pdf", "LEI Nº340-96.pdf", "LEI Nº457-2000.pdf" e, quando só há a cópia com o anexo, "… ANEXO.pdf"
+    candidatos = [f"LEI Nº{int(n):03d}{sep}{a}{fim}" for a in (aa, ano) for fim in ("", " ANEXO") for sep in (".", "-")]
     base = next((c for c in candidatos if (PRE2001 / "orig_raw" / f"{c}.pdf").exists()), candidatos[0])
     pdf = PRE2001 / "orig_raw" / f"{base}.pdf"
     vision = desfazer_hifen((PRE2001 / "ocr_txt" / f"{base}.txt").read_text())
